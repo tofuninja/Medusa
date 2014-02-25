@@ -7,7 +7,6 @@ public class Driver {
 	
 	public static void main(String[] args) 
 	{
-		System.out.println("+----------+ MADUSA +----------+");
 		intalize();// runs all the start up stuff
 		
 		while(true)
@@ -27,7 +26,6 @@ public class Driver {
 	
 	public static void intalize()
 	{
-		System.out.println("starting Frame...");
 		//Frame
 		JFrame f =  new JFrame("Madusa");
 		currentFrame = f;
