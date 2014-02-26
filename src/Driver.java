@@ -13,7 +13,7 @@ public class Driver {
 		{
 			try {
 				currentPan.repaint();
-				Thread.sleep(30);
+				Thread.sleep(10);
 			} 
 			catch (InterruptedException e) 
 			{
