@@ -12,7 +12,8 @@ public class Pan extends JPanel
 	
 	private Graphics g;
 	
-	
+	private Block b1 = new Block("Hello World this is a test\n:D\nAlso.......arthur is a noob :P",100,100,new Color(186,196,227), font);
+	private Block b2 = new Block("Class:someClass\nDoes some cool things that classes do\nI dont know..",200,200,new Color(196, 121, 126), font);
 	
 	public Pan()
 	{
@@ -43,48 +44,10 @@ public class Pan extends JPanel
 		g.fillRect(0,0,x,y);
 		
 		renderLine(150,150,250,250,new Color(255, 229, 153));
-		renderBlock("Hello World this is a test\n:D\nAlso.......arthur is a noob :P",100,100,new Color(186,196,227));
-		renderBlock("Class:someClass\nDoes some cool things that classes do\nI dont know..",200,200,new Color(196, 121, 126));
+		b1.draw(g);
+		b2.draw(g);
 	}
 	
-	
-	
-	///Renders a block with the text inside. 
-	private void renderBlock(String text, int x, int y, Color c)
-	{
-		String[] lines = text.split("\n");
-		int[] widths = new int[lines.length];
-		int border = 5;
-		
-		//Get box size from text
-		FontMetrics metrics = g.getFontMetrics(font);
-		int lineHeight = metrics.getHeight();
-		int height = lineHeight*lines.length + border*2;
-		int maxLineWidth = 0;
-		for(int i = 0; i < lines.length; i++)
-		{
-			widths[i] = metrics.stringWidth(lines[i]);
-			if(widths[i] > maxLineWidth) maxLineWidth = widths[i];
-		}
-		
-		int width = maxLineWidth + border*2;
-		
-		//Draw box
-		g.setColor(c);
-		g.fillRoundRect(x,y,width,height,15,15);
-		
-		g.setColor(Color.black);
-		g.drawRoundRect(x,y,width,height,15,15);
-		
-		//Draw out each line
-		g.setFont(font);
-		x += border;
-		y += metrics.getAscent() + border;
-		for(int i = 0; i < lines.length; i++)
-		{
-			g.drawString(lines[i],x + (maxLineWidth - widths[i])/2,y + i*lineHeight);
-		}
-	}
 	
 	private void renderLine(int x1, int y1, int x2, int y2,Color c)
 	{
