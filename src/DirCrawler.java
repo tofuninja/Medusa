@@ -1,7 +1,7 @@
 import java.io.File;
 import org.json.simple.*;
  
-public class FileCrawler {
+public class DirCrawler {
  	 
 	public static JSONObject getDirStruct(String path) { 
 		String files;
