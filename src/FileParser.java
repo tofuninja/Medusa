@@ -25,7 +25,7 @@ public class FileParser {
 						break;
 					case "variable": 
 						for (int i=1; i<evalResult.size(); i++)
-							members.add(evalResult.get(i);
+							members.add(evalResult.get(i));
 						break;
 					default:	
 						break;				
@@ -61,9 +61,22 @@ public class FileParser {
 		
 		// If VARIABLE
 		// -------- TO DO -------- //	
-		
+		Pattern varDeclaration = Pattern.compile("[^\\s]*\\s+([^;]+)"); 
+		Matcher varMatches = varDeclaration.matcher(line);
+		if (varMatches.find()) {
+			evalResult.add("variable");
+			line.replaceAll("=[^,]+","");
+			String[] varList = line.split("\\s*,\\s*");
+			for (String i : varList)
+				evalResult.add(i);
+			return evalResult;
+		}	
+
 		evalResult.add("neither");		
 		return evalResult;
 	}
+
+	/* Diagnostic code */
+	
 	
 }
