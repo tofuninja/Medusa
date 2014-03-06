@@ -1,4 +1,6 @@
+import java.io.*;
 import java.util.*;
+import org.json.simple.*;
 
 class ConnectionObject {
 	// Connections - a vector of classobject arrays
@@ -311,8 +313,46 @@ class VariableObject {
 }
 
 class DiagramStructure {
-	public static void main(String[] args) {
-		// Waiting for FileParser to be complete...
-		// Ready for use - ConnectionObject, ClassObject, ConstructorObject, MethodObject, ParameterObject, VariableObject,
+	// A diagram structure holds connections and classes
+	Vector<ConnectionObject> connections;
+	Vector<ClassObject> classes;
+	
+	// Init
+	public DiagramStructure() {
+		connections = new Vector<ConnectionObject>();
+		classes = new Vector<ClassObject>();
 	}
+	
+	public void parseJavaFile(String fileName) {
+		FileReader fr = new FileReader(fileName);
+		BufferedReader br = new BufferedReader(fr);
+
+		String currentJSONString = "";
+		while( (currentJSONString=br.readLine())!=null ) {
+		    JSONObject currentObject = new JSONObject(currentJSONString);
+		    if(currentObject.has("id")) {
+		        //System.out.println(currentObject.getInt("id"));
+		        //System.out.println(currentObject.getString("text"));               
+		        //System.out.println(currentObject.getString("created_at"));    
+		    }
+		}
+	}
+	
+	public Array getClasses() {
+		// Not complete yet
+		return classes.toArray();
+	}
+	
+	// Waiting for FileParser to be complete...
+	// Ready for use - ConnectionObject, ClassObject, ConstructorObject, MethodObject, ParameterObject, VariableObject,
+	/* Example usage:
+	 * DiagramStructure ds = new DiagramStructure();
+	 * ds.parse();
+	 * Array classArray = ds.getClasses(); // Now you have classes
+	 * for (Iterator classi = classArray.iterator(); classi.hasNext(); ) {
+	 *   // ClassObject co = (ClassObject)classi;
+     *   // Do something with class
+	 *	 // Use iterator to loop through methods as well
+	 * }
+	 */
 }
