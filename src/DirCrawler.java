@@ -21,7 +21,7 @@ public class DirCrawler {
 		return dirStruct;
 	}
 
-	public static ArrayList<String> getFlatDirStruct(String path) {
+	public static ArrayList<String> getFlatJavaFilesList(String path) {
 		String files;
 		ArrayList<String> dirStruct = new ArrayList<String>();
 		File folder = new File(path);
@@ -30,8 +30,9 @@ public class DirCrawler {
 		for (int i = 0; i < listOfFiles.length; i++) {
 			files = listOfFiles[i].getName();
 			if (listOfFiles[i].isDirectory())
-				  dirStruct.addAll(getFlatDirStruct(path+'/'+files));
+				  dirStruct.addAll(getFlatJavaFilesList(path+'/'+files));
 			else 
+				if (files.matches("\.java"))
 		          dirStruct.add(files);
 		}
 		return dirStruct;
