@@ -29,10 +29,11 @@ public class DirCrawler {
 		
 		for (int i = 0; i < listOfFiles.length; i++) {
 			files = listOfFiles[i].getName();
+			
 			if (listOfFiles[i].isDirectory())
 				  dirStruct.addAll(getFlatJavaFilesList(path+'/'+files));
 			else 
-				if (files.matches("\.java"))
+				if (files.matches(".*java"))
 		          dirStruct.add(path+'/'+files);
 		}
 		return dirStruct;

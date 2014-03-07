@@ -1,3 +1,4 @@
+/*
 import java.io.*;
 import java.util.*;
 import org.json.simple.*;
@@ -31,11 +32,11 @@ class ConnectionObject {
 }
 
 class ClassObject {
-	/*
+	
 	 * constructors - List of constructors
 	 * methods - List of methods
 	 * variables - List of global variables
-	 */
+	 
 	Vector<ConstructorObject> constructors;
 	Vector<MethodObject> methods;
 	Vector<VariableObject> variables;
@@ -89,9 +90,9 @@ class ClassObject {
 }
 
 class ConstructorObject {
-	/*
+	
 	 * Type, Parameters
-	 */
+	 
 	String type;		// Return Type
 	Vector<ParameterObject> parameters;	// Parameters
 	
@@ -128,9 +129,9 @@ class ConstructorObject {
 }
 
 class ParameterObject {
-	/*
+	
 	 * Type, Name
-	 */
+	 
 	String type;		// Variable Type
 	String name;		// Variable Name
 	
@@ -158,11 +159,11 @@ class ParameterObject {
 }
 
 class MethodObject {
-	/*
+	
 	 * Type, Name, Value, Static, Parameters
 	 *
 	 * Value are forced into a String object
-	 */
+	 
 	String type;		// Return Type
 	String name;		// Method Name
 	boolean isStatic;	// Whether it's static
@@ -244,11 +245,11 @@ class MethodObject {
 }
 
 class VariableObject {
-	/*
+	
 	 * Type, Name, Value, Static
 	 *
 	 * Value are forced into a String object
-	 */
+	 
 	String type;		// Data Type
 	String name;		// Variable Name
 	String value;		// Variable Value
@@ -345,7 +346,7 @@ class DiagramStructure {
 	
 	// Waiting for FileParser to be complete...
 	// Ready for use - ConnectionObject, ClassObject, ConstructorObject, MethodObject, ParameterObject, VariableObject,
-	/* Example usage:
+	 Example usage:
 	 * DiagramStructure ds = new DiagramStructure();
 	 * ds.parse();
 	 * Array classArray = ds.getClasses(); // Now you have classes
@@ -354,5 +355,5 @@ class DiagramStructure {
      *   // Do something with class
 	 *	 // Use iterator to loop through methods as well
 	 * }
-	 */
-}
+	 
+}*/

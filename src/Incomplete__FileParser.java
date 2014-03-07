@@ -1,4 +1,4 @@
-import java.io.*;
+/*import java.io.*;
 import org.json.simple.*;
 import java.util.ArrayList;
 import java.util.regex.*;
@@ -25,13 +25,13 @@ public class FileParser {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} /*finally {
+		} finally {
 			if (file) {
 				try {
 					file.close();
 				} catch (IOException e) {}
 			}				
-		}*/
+		}
 		
 		
 		fileStruct.put("members", members);
@@ -68,9 +68,10 @@ public class FileParser {
 		return evalResult;
 	}
 
-	/* Diagnostic code */
+	 Diagnostic code 
 	public static void main( String args[] ) {
 		System.out.println(getFileStruct("test.java").toString());
 	}
 	
 }
+*/

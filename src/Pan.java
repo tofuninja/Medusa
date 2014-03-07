@@ -1,7 +1,10 @@
 import java.awt.*;
+
 import javax.swing.JPanel;
+
 import java.awt.font.*;
 import java.awt.geom.*;
+import java.util.ArrayList;
 
 /// Will be the basic render, will prob replace later down the road. 
 public class Pan extends JPanel
@@ -12,13 +15,21 @@ public class Pan extends JPanel
 	
 	private Graphics g;
 	
-	private Block b1 = new Block("Hello World this is a test\n:D\nAlso.......arthur is a noob :P",100,100,new Color(186,196,227), font);
-	private Block b2 = new Block("Class:someClass\nDoes some cool things that classes do\nI dont know..",200,200,new Color(196, 121, 126), font);
+	ArrayList<Block> block_list = new ArrayList<Block>();
 	
-	public Pan()
+	public Pan(Diagram d)
 	{
 		setBackground(Color.BLACK);
 		setPreferredSize(new Dimension(x, y));
+		
+		for(int i = 0; i < d.JavaBlocks.size(); i++)
+		{
+			
+			DiagramBlock db = d.JavaBlocks.get(i);
+			Block b = new Block(db.getName(), (int)db.getX(), (int)db.getY(), new Color(196, 121, 126), font);
+			block_list.add(b);
+		}
+		
 	}
 	
 	public Pan(int x, int y)
@@ -43,9 +54,10 @@ public class Pan extends JPanel
 		g.setColor(backgroundColor);
 		g.fillRect(0,0,x,y);
 		
-		renderLine(150,150,250,250,new Color(255, 229, 153));
-		b1.draw(g);
-		b2.draw(g);
+		for(int i = 0; i < block_list.size(); i++)
+		{
+			block_list.get(i).draw(g);
+		}
 	}
 	
 	

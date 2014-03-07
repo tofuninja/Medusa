@@ -1,11 +1,11 @@
 import java.util.*;
 
-class Block {
+class DiagramBlock {
 	private String name;
 	private float x;
 	private float y;
 	
-	public Block(String name, float x, float y) {
+	public DiagramBlock(String name, float x, float y) {
 		this.name = name;
 		this.x = x;
 		this.y = y;
@@ -42,29 +42,26 @@ class Block {
 }
 
 class Diagram {
-	public Vector<Block> JavaBlocks;
+	public ArrayList<DiagramBlock> JavaBlocks = new ArrayList<DiagramBlock>();
 	
 	public Diagram(ArrayList<String> JavaClasses) {
 		for( int i=0; i<JavaClasses.size(); i++ ) {
-			// 50 units apart from each other horizontal
-			Block b = new Block(JavaClasses.get(i), 50*i, 0);
+			DiagramBlock b = new DiagramBlock(JavaClasses.get(i), 200*(i%5), (i/5)*100);
 			JavaBlocks.add(b);
 		}
 	}
 	
 	public void printBlockCoordinates() {
 		for( int i=0; i<JavaBlocks.size(); i++ ) {
-			Block b = JavaBlocks.get(i);
-			// Prints <ClassName>: (x, y)
+			DiagramBlock b = JavaBlocks.get(i);
 			System.out.println(b);
 		}
 	}
 	
 	public String getCoordinateForJavaClass(String name) {
 		for( int i=0; i<JavaBlocks.size(); i++ ) {
-			Block b = JavaBlocks.get(i);
+			DiagramBlock b = JavaBlocks.get(i);
 			if( b.equals(name) ) {
-				// Returning as "x,y"
 				return b.getX() + "," + b.getY();
 			}
 		}

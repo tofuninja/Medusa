@@ -5,11 +5,36 @@ public class Driver {
 	public static Pan currentPan;
 	public static JFrame currentFrame;
 	
-	public static void main(String[] args) 
+	public static void renderDiagram(Diagram d)
 	{
-		intalize();// runs all the start up stuff
+		//Frame
+		JFrame f =  new JFrame("Madusa");
+		currentFrame = f;
+		//pan
+		Pan p = new Pan(d);
+		currentPan = p;
 		
-		while(true)
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.getContentPane().add(p);
+		f.setResizable(false);
+		f.pack();
+		f.setVisible(true);
+		
+		renderThread t = new renderThread(p);
+		t.start();
+	}
+
+}
+
+class renderThread extends Thread {
+	Pan currentPan;
+	public renderThread(Pan p) {
+        currentPan = p;
+    }
+
+    public void run() 
+    {
+    	while(true)
 		{
 			try {
 				currentPan.repaint();
@@ -21,23 +46,5 @@ public class Driver {
 			}
 			
 		}
-	}
-	
-	
-	public static void intalize()
-	{
-		//Frame
-		JFrame f =  new JFrame("Madusa");
-		currentFrame = f;
-		//pan
-		Pan p = new Pan();
-		currentPan = p;
-		
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.getContentPane().add(p);
-		f.setResizable(false);
-		f.pack();
-		f.setVisible(true);
-	}
-
+    }
 }

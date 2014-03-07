@@ -58,7 +58,7 @@ class Block extends Entity
 		//Draw out each line
 		g.setFont(font);
 		int cx = x + border;
-		int cy = x + ascent + border;
+		int cy = y + ascent + border;
 		for(int i = 0; i < lines.length; i++)
 		{
 			g.drawString(lines[i],cx + (maxLineWidth - widths[i])/2,cy + i*lineHeight);
