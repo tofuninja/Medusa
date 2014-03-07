@@ -23,10 +23,11 @@ public class ClassFinder {
 		return classNames;
 	}
 
+/*
 	public static void main( String args[] ) {
 		ArrayList<String> list = getClassList("test.java");
 		for (String s : list)
 		    System.out.println(s);
 	}
-
+*/
 }
