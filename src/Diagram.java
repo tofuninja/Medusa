@@ -46,6 +46,7 @@ class Diagram {
 	
 	public Diagram(ArrayList<String> JavaClasses) {
 		for( int i=0; i<JavaClasses.size(); i++ ) {
+			// 50 units apart from each other horizontal
 			Block b = new Block(JavaClasses.get(i), 50*i, 0);
 			JavaBlocks.add(b);
 		}
@@ -54,6 +55,7 @@ class Diagram {
 	public void printBlockCoordinates() {
 		for( int i=0; i<JavaBlocks.size(); i++ ) {
 			Block b = JavaBlocks.get(i);
+			// Prints <ClassName>: (x, y)
 			System.out.println(b);
 		}
 	}
@@ -62,6 +64,7 @@ class Diagram {
 		for( int i=0; i<JavaBlocks.size(); i++ ) {
 			Block b = JavaBlocks.get(i);
 			if( b.equals(name) ) {
+				// Returning as "x,y"
 				return b.getX() + "," + b.getY();
 			}
 		}
