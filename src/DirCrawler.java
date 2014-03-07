@@ -33,7 +33,7 @@ public class DirCrawler {
 				  dirStruct.addAll(getFlatJavaFilesList(path+'/'+files));
 			else 
 				if (files.matches("\.java"))
-		          dirStruct.add(files);
+		          dirStruct.add(path+'/'+files);
 		}
 		return dirStruct;
 	}
