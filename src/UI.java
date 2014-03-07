@@ -56,7 +56,7 @@ public class UI extends JPanel implements ActionListener {
 						
 			}
 			
-			Diagram diag = new Diagram(class_list);
+			Diagram diag = new Diagram(class_list, m_folder_path);
 			Driver.renderDiagram(diag);
 		}
 	}

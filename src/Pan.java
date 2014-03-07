@@ -22,9 +22,11 @@ public class Pan extends JPanel
 		setBackground(Color.BLACK);
 		setPreferredSize(new Dimension(x, y));
 		
+		Block a = new Block("Folder: " + d.Folder + "\nClass Count: " + d.JavaBlocks.size(), 50, 0, new Color(193, 255, 194), font);
+		block_list.add(a);
+		
 		for(int i = 0; i < d.JavaBlocks.size(); i++)
 		{
-			
 			DiagramBlock db = d.JavaBlocks.get(i);
 			Block b = new Block(db.getName(), (int)db.getX(), (int)db.getY(), new Color(196, 121, 126), font);
 			block_list.add(b);
@@ -52,7 +54,7 @@ public class Pan extends JPanel
 		
 		//Clears the background
 		g.setColor(backgroundColor);
-		g.fillRect(0,0,x,y);
+		g.fillRect(0,0,x+100,y+100);
 		
 		for(int i = 0; i < block_list.size(); i++)
 		{

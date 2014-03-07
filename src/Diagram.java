@@ -43,10 +43,12 @@ class DiagramBlock {
 
 class Diagram {
 	public ArrayList<DiagramBlock> JavaBlocks = new ArrayList<DiagramBlock>();
+	public String Folder;
 	
-	public Diagram(ArrayList<String> JavaClasses) {
+	public Diagram(ArrayList<String> JavaClasses, String folder) {
+		Folder = folder;
 		for( int i=0; i<JavaClasses.size(); i++ ) {
-			DiagramBlock b = new DiagramBlock(JavaClasses.get(i), 200*(i%5), (i/5)*100);
+			DiagramBlock b = new DiagramBlock(JavaClasses.get(i), 50 + 200*(i%5), 100 + (i/5)*100);
 			JavaBlocks.add(b);
 		}
 	}
