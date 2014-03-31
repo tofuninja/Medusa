@@ -28,7 +28,7 @@ public class Pan extends JPanel
 		for(int i = 0; i < d.JavaBlocks.size(); i++)
 		{
 			DiagramBlock db = d.JavaBlocks.get(i);
-			Block b = new Block(db.getName(), (int)db.getX(), (int)db.getY(), new Color(196, 121, 126), font);
+			Block b = new Block(db.getClassName(), db.getMethodClasses(), db.getVariableClasses(), (int)db.getX(), (int)db.getY(), new Color(196, 121, 126), font);
 			block_list.add(b);
 		}
 		
