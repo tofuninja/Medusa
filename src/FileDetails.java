@@ -8,7 +8,13 @@ import japa.parser.ast.visitor.*;
 import java.io.*;
 import java.util.*;
 
-public class MethodPrinter {
+public class FileDetails {
+
+	/**
+	 *	Call 
+	 *		FileDetails.getClasses("/path/to/file.java");
+	 *	It will return an ArrayList of JavaClass objects
+	 */
 
     public static ArrayList<JavaClass> getClasses(String file) throws Exception {
         // creates an input stream for the file to be parsed
