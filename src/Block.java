@@ -4,8 +4,6 @@ import java.awt.font.*;
 class Block extends Entity
 {
 	public String text;
-	public ArrayList<String> methodNames;
-	public ArrayList<String> variableNames;
 	public int x;
 	public int y;
 	public Color color;
@@ -20,11 +18,9 @@ class Block extends Entity
 	private int maxLineWidth;
 	private int ascent;
 	
-	public Block(String text, ArrayList<String> methodNames, ArrayList<String> variableNames, int x, int y, Color color, Font font)
+	public Block(String text, int x, int y, Color color, Font font)
 	{
 		this.text = text;
-		this.methodNames = methodNames;
-		this.variableNames = variableNames;
 		this.x = x;
 		this.y = y;
 		this.color = color;
@@ -65,7 +61,7 @@ class Block extends Entity
 		int cy = y + ascent + border;
 		for(int i = 0; i < lines.length; i++)
 		{
-			g.drawString(lines[i],cx + (maxLineWidth - widths[i])/2,cy + i*lineHeight);
+			g.drawString(lines[i],cx ,cy + i*lineHeight);
 		}
 	}
 
