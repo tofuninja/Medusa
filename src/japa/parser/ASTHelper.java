@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * This class helps to construct new nodes.
  * 
- * @author Julio Vilmar Gesser
+ * @author SOME GUY
  */
 public final class ASTHelper {
 

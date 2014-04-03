@@ -35,6 +35,22 @@ public class FileDetails {
         return mv.classes;
     }
 
+	public static void main(String args[]) throws Exception{
+	        FileInputStream in = new FileInputStream("test.javla");
+
+        CompilationUnit cu;
+        try {
+            // parse the file
+            cu = JavaParser.parse(in);
+        } finally {
+            in.close();
+        }
+
+        // visit and print the methods names
+		MethodVisitor mv = new MethodVisitor();
+        mv.visit(cu, null);
+  		System.out.println(mv.classes.toString());
+	}
     
     private static class MethodVisitor extends VoidVisitorAdapter {
 
@@ -46,6 +62,13 @@ public class FileDetails {
         	JavaClass jc = new JavaClass();
         	
         	jc.className = n.getName();
+        	jc.extendsClass = (n.getExtends().size() > 0) ? n.getExtends().get(0).getName() : "";
+     
+
+        	for(Iterator<ClassOrInterfaceType> h = n.getImplements().iterator(); h.hasNext(); ) {
+        		ClassOrInterfaceType imp = h.next();
+        		jc.implementsInterfaces.add(imp.getName());
+        	}
         	
             for(Iterator<BodyDeclaration> i = n.getMembers().iterator(); i.hasNext(); ) {
         	    BodyDeclaration item = i.next();
