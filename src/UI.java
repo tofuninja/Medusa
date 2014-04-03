@@ -2,9 +2,11 @@ import java.io.*;
 import java.util.ArrayList;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+
 
 import javax.swing.*;
-
+import javax.imageio.*;
 
 public class UI extends JPanel implements ActionListener 
 {
@@ -18,8 +20,8 @@ public class UI extends JPanel implements ActionListener
 	JMenuBar mb;
 	JMenu menu;
 	JMenuItem mi;
+	JMenuItem save;
 	
-
 	public UI() 
 	{
 		fc = new JFileChooser();
@@ -33,9 +35,14 @@ public class UI extends JPanel implements ActionListener
 		menu = new JMenu("File");
 		mb.add(menu);
 		mi = new JMenuItem("Open");
+		save = new JMenuItem("save");
+		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,
+				ActionEvent.ALT_MASK));
 		mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,
 				ActionEvent.ALT_MASK));
+		menu.add(save);
 		menu.add(mi);
+		save.addActionListener(this);
 		mi.addActionListener(this);
 		return mb;
 	}
@@ -103,6 +110,10 @@ public class UI extends JPanel implements ActionListener
 			currentPan.setDiag(diag);
 
 		}
+		else if(e.getSource() == save){
+			SaveImage(currentPan);
+		
+	}
 	}
 
 	private static void showWindow() 
@@ -127,6 +138,20 @@ public class UI extends JPanel implements ActionListener
 		t.start();
 
 	}
+	
+	private static void SaveImage(JPanel panel){
+		BufferedImage bufImage = new BufferedImage(panel.getSize().width,
+			panel.getSize().height,
+			BufferedImage.TYPE_INT_RGB);
+		panel.paint(bufImage.createGraphics());
+		try {
+		ImageIO.write(bufImage, "jpg",new File("C:\\User\\liu963\\Desktop"));
+		}
+		catch (IOException e) {
+        	
+        }
+	}
+	
 
 	public static void main(String[] args) 
 	{
