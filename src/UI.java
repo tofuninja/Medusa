@@ -35,11 +35,10 @@ public class UI extends JPanel implements ActionListener
 		menu = new JMenu("File");
 		mb.add(menu);
 		mi = new JMenuItem("Open");
+
 		save = new JMenuItem("save");
-		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,
-				ActionEvent.ALT_MASK));
-		mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,
-				ActionEvent.ALT_MASK));
+		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
 		menu.add(save);
 		menu.add(mi);
 		save.addActionListener(this);
@@ -131,7 +130,7 @@ public class UI extends JPanel implements ActionListener
 		currentPan = p;
 
 		frame.getContentPane().add(p);
-		frame.setResizable(false);
+		//frame.setResizable(false);
 		frame.pack();
 
 		renderThread t = new renderThread(p);

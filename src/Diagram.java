@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.util.*;
 
 class DiagramBlock {
@@ -6,6 +7,7 @@ class DiagramBlock {
 	private ArrayList<String> variableNames;
 	private float x;
 	private float y;
+	public Block block;
 	
 	public DiagramBlock(String className, ArrayList<String> methodNames, ArrayList<String> variableNames, float x, float y) {
 		this.className = className;
@@ -13,6 +15,25 @@ class DiagramBlock {
 		this.variableNames = variableNames;
 		this.x = x;
 		this.y = y;
+		
+		
+		String str = className;
+		
+		for(int j = 0; j <methodNames.size(); j++)
+		{
+			str += methodNames.get(j) + "\n";
+		}
+		
+		str += "\n";
+		
+		for(int j = 0; j < variableNames.size(); j++)
+		{
+			str += variableNames.get(j) + "\n";
+		}
+		
+		
+		block = new Block(str, (int) x, (int) y,new Color(196, 121, 126), Pan.font);
+		
 	} 
 	
 	// Getter and setter for class name
@@ -65,9 +86,11 @@ class Diagram {
 	public ArrayList<DiagramBlock> JavaBlocks = new ArrayList<DiagramBlock>();
 	public String Folder;
 	
-	public Diagram(ArrayList<JavaClass> JavaClasses, String folder) {
+	public Diagram(ArrayList<JavaClass> JavaClasses, String folder) 
+	{
 		Folder = folder;
-		for( int i=0; i<JavaClasses.size(); i++ ) {
+		for( int i=0; i<JavaClasses.size(); i++ ) 
+		{
 			JavaClass jc = JavaClasses.get(i);
 			DiagramBlock b = new DiagramBlock(jc.className, jc.methodNames, jc.variableNames, 50 + 200*(i%5), 100 + (i/5)*100);
 			JavaBlocks.add(b);
