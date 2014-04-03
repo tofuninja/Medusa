@@ -62,14 +62,14 @@ public class FileDetails {
         	JavaClass jc = new JavaClass();
         	
         	jc.className = n.getName();
-        	jc.extendsClass = (n.getExtends().size() > 0) ? n.getExtends().get(0).getName() : "";
+        	jc.extendsClass = (n.getExtends() != null) ? n.getExtends().get(0).getName() : "";
      
-
-        	for(Iterator<ClassOrInterfaceType> h = n.getImplements().iterator(); h.hasNext(); ) {
-        		ClassOrInterfaceType imp = h.next();
-        		jc.implementsInterfaces.add(imp.getName());
+        	if (n.getImplements() != null) {
+	        	for(Iterator<ClassOrInterfaceType> h = n.getImplements().iterator(); h.hasNext(); ) {
+	        		ClassOrInterfaceType imp = h.next();
+	        		jc.implementsInterfaces.add(imp.getName());
+	        	}
         	}
-        	
             for(Iterator<BodyDeclaration> i = n.getMembers().iterator(); i.hasNext(); ) {
         	    BodyDeclaration item = i.next();
         	    if (item instanceof japa.parser.ast.body.FieldDeclaration) {

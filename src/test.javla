@@ -1,0 +1,27 @@
+import java.io.*;
+import java.util.regex.*;
+
+public class test extends ptyok implements lot, many, implemensts{
+
+	int x,y, z;
+	int                                               [] xu;
+	String asd, asda;
+
+	public static int sdfdsf () {
+		System.out.println("asdad");
+	}
+
+	public static void main(String args[]) {
+	
+		String line = "private static String[] take (int k, String t) {";
+	
+		Pattern p = Pattern.compile(""); 
+		Matcher m = p.matcher(line);
+		
+		if (m.find()) {
+			System.out.println (m.group(1));
+		}	
+	
+	}
+}
+
