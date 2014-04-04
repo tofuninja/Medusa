@@ -13,10 +13,10 @@ public class UI extends JPanel implements ActionListener
 	public static Pan currentPan;
 	static JFrame frame;
 	static private final String newline = "\n";
-	JTextArea adr;
+	//JTextArea adr;
 	JFileChooser fc;
 	String m_folder_path = "";
-	JScrollPane sp;
+	//JScrollPane sp;
 	JMenuBar mb;
 	JMenu menu;
 	JMenuItem mi;
@@ -46,6 +46,7 @@ public class UI extends JPanel implements ActionListener
 		return mb;
 	}
 
+	/*
 	public Container create() 
 	{
 		JPanel cp = new JPanel(new BorderLayout());
@@ -55,7 +56,7 @@ public class UI extends JPanel implements ActionListener
 		sp = new JScrollPane(adr);
 		cp.add(sp, BorderLayout.CENTER);
 		return cp;
-	}
+	}*/
 
 	
 	/// Actions listener for the file dialog 
@@ -81,7 +82,7 @@ public class UI extends JPanel implements ActionListener
 			}
 			
 			
-			adr.setCaretPosition(adr.getDocument().getLength());
+			//adr.setCaretPosition(adr.getDocument().getLength());
 			
 			ArrayList<String> arr = DirCrawler.getFlatJavaFilesList(m_folder_path);
 			ArrayList<JavaClass> class_list = new ArrayList<JavaClass>();
@@ -122,8 +123,8 @@ public class UI extends JPanel implements ActionListener
 		// frame.add(new UI());
 		UI ui = new UI();
 		frame.setJMenuBar(ui.menu());
-		frame.setContentPane(ui.create());
-		frame.setSize(450, 260);
+		//frame.setContentPane(ui.create());
+		//frame.setSize(450, 260);
 		frame.setVisible(true);
 
 		Pan p = new Pan();
