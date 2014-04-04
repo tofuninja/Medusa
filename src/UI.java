@@ -1,8 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
-import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 
 
 import javax.swing.*;
@@ -12,7 +10,7 @@ public class UI extends JPanel implements ActionListener
 {
 	public static Pan currentPan;
 	static JFrame frame;
-	static private final String newline = "\n";
+	//static private final String newline = "\n";
 	//JTextArea adr;
 	JFileChooser fc;
 	String m_folder_path = "";

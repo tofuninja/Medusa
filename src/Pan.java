@@ -172,6 +172,7 @@ public class Pan extends JPanel
 		
 	}
 
+	/*
 	private void renderLine(int x1, int y1, int x2, int y2, Color c) {
 		int dot = 8;
 		int space = 20;
@@ -191,6 +192,7 @@ public class Pan extends JPanel
 			g.fillOval(x - dot / 2, y - dot / 2, dot, dot);
 		}
 	}
+	*/
 	
 	
 	

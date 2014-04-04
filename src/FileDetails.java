@@ -1,8 +1,6 @@
 import japa.parser.*;
 import japa.parser.ast.*;
 import japa.parser.ast.body.*;
-import japa.parser.ast.expr.*;
-import japa.parser.ast.stmt.*;
 import japa.parser.ast.type.*;
 import japa.parser.ast.visitor.*;
 import java.io.*;
@@ -54,7 +52,7 @@ public class FileDetails {
 	}
 	*/
     
-    private static class MethodVisitor extends VoidVisitorAdapter 
+    private static class MethodVisitor extends VoidVisitorAdapter <Object>
     {
 
 		public ArrayList<JavaClass> classes = new ArrayList<JavaClass>();		
