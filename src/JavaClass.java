@@ -6,6 +6,7 @@ public class JavaClass {
 	ArrayList<String> implementsInterfaces;
 	ArrayList<String> methodNames;
 	ArrayList<String> variableNames;
+	ArrayList<String> referenceNames;
 	
 	public JavaClass() {
 		className = "";

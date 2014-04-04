@@ -1,8 +1,10 @@
 import japa.parser.*;
 import japa.parser.ast.*;
 import japa.parser.ast.body.*;
+import japa.parser.ast.expr.ClassExpr;
 import japa.parser.ast.type.*;
 import japa.parser.ast.visitor.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -22,7 +24,9 @@ public class FileDetails {
         try {
             // parse the file
             cu = JavaParser.parse(in);
-        } finally {
+        } 
+        finally 
+        {
             in.close();
         }
 
@@ -65,7 +69,12 @@ public class FileDetails {
         	
         	jc.className = n.getName();
         	jc.extendsClass = (n.getExtends() != null) ? n.getExtends().get(0).getName() : "";
+        	
+        	referenceVisit rf = new referenceVisit();
+        	rf.visit(n, null);
      
+        	jc.referenceNames = rf.references;
+        	
         	if (n.getImplements() != null) 
         	{
         		
@@ -120,4 +129,20 @@ public class FileDetails {
 			//System.out.println(n.getMembers().toString());
         }
     }
+    
+    
+    
+    private static class referenceVisit extends VoidVisitorAdapter <Object>
+    {
+    	ArrayList<String> references = new ArrayList<String>();
+	
+        @Override
+        public void visit(ClassOrInterfaceType n, Object arg) 
+        {
+        	if(!references.contains(n.getName()))
+        		references.add(n.getName());
+        }
+    }
+    
+    
 }
