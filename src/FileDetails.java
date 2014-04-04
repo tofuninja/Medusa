@@ -1,11 +1,14 @@
 import japa.parser.*;
 import japa.parser.ast.*;
 import japa.parser.ast.body.*;
+import japa.parser.ast.expr.ClassExpr;
 import japa.parser.ast.type.*;
 import japa.parser.ast.visitor.*;
 
 import java.io.*;
 import java.util.*;
+
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 public class FileDetails {
 
@@ -140,7 +143,19 @@ public class FileDetails {
         {
         	if(!references.contains(n.getName()))
         		references.add(n.getName());
+        	
+        	if( n.getTypeArgs() != null)
+        	{
+	        	for(Type t: n.getTypeArgs())
+	        	{
+        			if(!references.contains(t.toString()))
+                		references.add(t.toString());
+	        	}
+        	}
+        	
         }
+        
+       
     }
     
     

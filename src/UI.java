@@ -164,6 +164,10 @@ public class UI extends JPanel implements ActionListener
 			{
 	        	
 	        }
+			catch(OutOfMemoryError e)
+			{
+				infoBox("Diagram too large","Error");
+			}
 		} 
 		else 
 		{
