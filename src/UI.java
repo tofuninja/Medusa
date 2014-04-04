@@ -24,8 +24,7 @@ public class UI extends JPanel implements ActionListener
 	
 	public UI() 
 	{
-		fc = new JFileChooser();
-		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		
 		// mi.addActionListener(this);
 	}
 
@@ -64,29 +63,29 @@ public class UI extends JPanel implements ActionListener
 	{
 		if (e.getSource() == mi) 
 		{
-			
+			fc = new JFileChooser();
+			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnVal = fc.showOpenDialog(UI.this);
-			
-			
+
 			if (returnVal == JFileChooser.APPROVE_OPTION) 
 			{
 				File file = fc.getSelectedFile();
 				// adr.append("Browsing: " + file.getPath() + "." + newline);
 				m_folder_path = file.getPath();
-			}
-			else
+			} 
+			else 
 			{
 				// Did not open a file
 				// Return and do nothing
 				return;
 			}
-			
-			
-			//adr.setCaretPosition(adr.getDocument().getLength());
-			
-			ArrayList<String> arr = DirCrawler.getFlatJavaFilesList(m_folder_path);
+
+			// adr.setCaretPosition(adr.getDocument().getLength());
+
+			ArrayList<String> arr = DirCrawler
+					.getFlatJavaFilesList(m_folder_path);
 			ArrayList<JavaClass> class_list = new ArrayList<JavaClass>();
-			
+
 			for (int i = 0; i < arr.size(); i++) 
 			{
 				ArrayList<JavaClass> classes;
@@ -96,24 +95,24 @@ public class UI extends JPanel implements ActionListener
 				} 
 				catch (Exception e1) 
 				{
-					continue;//error in file
+					continue;// error in file
 				}
-				
+
 				for (int j = 0; j < classes.size(); j++) 
 				{
 					class_list.add(classes.get(j));
 				}
 			}
-			
-			
+
 			Diagram diag = new Diagram(class_list, m_folder_path);
 			currentPan.setDiag(diag);
 
+		} 
+		else if (e.getSource() == save) 
+		{
+			SaveImage();
+			
 		}
-		else if(e.getSource() == save){
-			SaveImage(currentPan);
-		
-	}
 	}
 
 	private static void showWindow() 
@@ -139,17 +138,37 @@ public class UI extends JPanel implements ActionListener
 
 	}
 	
-	private static void SaveImage(JPanel panel){
-		BufferedImage bufImage = new BufferedImage(panel.getSize().width,
-			panel.getSize().height,
-			BufferedImage.TYPE_INT_RGB);
-		panel.paint(bufImage.createGraphics());
-		try {
-		ImageIO.write(bufImage, "jpg",new File("C:\\User\\liu963\\Desktop"));
+	private  void SaveImage()
+	{
+		fc = new JFileChooser();
+		fc.setSelectedFile(new File("diagram.png"));
+		int returnVal = fc.showSaveDialog(this);
+		
+		if (returnVal == JFileChooser.APPROVE_OPTION) 
+		{
+			File file = fc.getSelectedFile();
+			if(!file.getPath().toLowerCase().endsWith(".png"))
+			{
+			    file = new File(file.getPath() + ".png");
+			}
+			
+			try 
+			{
+				ImageIO.write(Pan.me.img, "png",file);
+			}
+			catch (IOException e) 
+			{
+	        	
+	        }
+		} 
+		else 
+		{
+			// Did not open a file
+			// Return and do nothing
+			return;
 		}
-		catch (IOException e) {
-        	
-        }
+		
+		
 	}
 	
 

@@ -21,7 +21,7 @@ public class Pan extends JPanel
 	private Graphics g;
 	ArrayList<Block> block_list = new ArrayList<Block>();
 	
-	BufferedImage img;
+	public BufferedImage img;
 	Graphics imgG;
 	
 	BufferedImage[][] subImage;
