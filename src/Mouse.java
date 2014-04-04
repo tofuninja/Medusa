@@ -26,8 +26,11 @@ public class Mouse implements MouseListener , MouseMotionListener , MouseWheelLi
 	public void mousePressed(MouseEvent e) {
 		if(e.getButton()==1)
 			Lpress = true;
+		if(e.getButton()==2)
+			wheel = 0;
 		if(e.getButton()==3)
 			Rpress = true;
+		
 		
 		Pan.me.click(x, y);
 	}

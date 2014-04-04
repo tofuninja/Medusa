@@ -44,6 +44,10 @@ class Block extends Entity
 		
 		width = maxLineWidth + border*2;
 		ascent = metrics.getAscent();
+		
+		
+		
+		
 	}
 	
 	public void draw(Graphics g)

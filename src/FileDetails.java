@@ -35,6 +35,7 @@ public class FileDetails {
         return mv.classes;
     }
 
+    /*
 	public static void main(String args[]) throws Exception{
 	        FileInputStream in = new FileInputStream("test.javla");
 
@@ -51,46 +52,66 @@ public class FileDetails {
         mv.visit(cu, null);
   		System.out.println(mv.classes.toString());
 	}
+	*/
     
-    private static class MethodVisitor extends VoidVisitorAdapter {
+    private static class MethodVisitor extends VoidVisitorAdapter 
+    {
 
 		public ArrayList<JavaClass> classes = new ArrayList<JavaClass>();		
 		
         @Override
-        public void visit(ClassOrInterfaceDeclaration n, Object arg) {
+        public void visit(ClassOrInterfaceDeclaration n, Object arg) 
+        {
         
         	JavaClass jc = new JavaClass();
         	
         	jc.className = n.getName();
         	jc.extendsClass = (n.getExtends() != null) ? n.getExtends().get(0).getName() : "";
      
-        	if (n.getImplements() != null) {
-	        	for(Iterator<ClassOrInterfaceType> h = n.getImplements().iterator(); h.hasNext(); ) {
+        	if (n.getImplements() != null) 
+        	{
+        		
+	        	for(Iterator<ClassOrInterfaceType> h = n.getImplements().iterator(); h.hasNext(); ) 
+	        	{
 	        		ClassOrInterfaceType imp = h.next();
 	        		jc.implementsInterfaces.add(imp.getName());
 	        	}
+	        	
         	}
-            for(Iterator<BodyDeclaration> i = n.getMembers().iterator(); i.hasNext(); ) {
+            for(Iterator<BodyDeclaration> i = n.getMembers().iterator(); i.hasNext(); ) 
+            {
         	    BodyDeclaration item = i.next();
-        	    if (item instanceof japa.parser.ast.body.FieldDeclaration) {
+        	    if (item instanceof japa.parser.ast.body.FieldDeclaration) 
+        	    {
+        	    	
         	    	japa.parser.ast.body.FieldDeclaration fd = (japa.parser.ast.body.FieldDeclaration)item;
-        	    	for(Iterator<VariableDeclarator> j = fd.getVariables().iterator(); j.hasNext(); ) {
+        	    	
+        	    	for(Iterator<VariableDeclarator> j = fd.getVariables().iterator(); j.hasNext(); ) 
+        	    	{
         	    		VariableDeclarator vd = j.next();
-        	    		jc.variableNames.add(fd.getType()+" "+vd.toString());
+        	    		jc.variableNames.add(fd.getType()+" "+vd.getId().getName());
         	    	}
+        	    	
         	    }
-        	    else if (item instanceof japa.parser.ast.body.MethodDeclaration) {
+        	    else if (item instanceof japa.parser.ast.body.MethodDeclaration) 
+        	    {
+        	    	
         	    	japa.parser.ast.body.MethodDeclaration md = (japa.parser.ast.body.MethodDeclaration)item;  
         	    	String umlstr = md.getType().toString();
-        	    	umlstr += " "+md.getName()+"(";        	    
-        	    	if(md.getParameters() != null) {
-		    	    	for(Iterator<Parameter> k = md.getParameters().iterator(); k.hasNext(); ) {
+        	    	umlstr += " "+md.getName()+"(";  
+        	    	
+        	    	if(md.getParameters() != null) 
+        	    	{
+		    	    	for(Iterator<Parameter> k = md.getParameters().iterator(); k.hasNext(); ) 
+		    	    	{
 							Parameter p = k.next();
 							umlstr += p.toString()+((k.hasNext())?", ":"");
 				   	    }
 				   	}
+        	    	
 				   	umlstr += ")";
 				   	jc.methodNames.add(umlstr);	
+				   	
         	    }
         	}
         	

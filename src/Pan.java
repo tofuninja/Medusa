@@ -10,7 +10,7 @@ public class Pan extends JPanel
 {
 	public int x = 1000, y = 900;
 	public Color backgroundColor = Color.white;
-	public static Font font = new Font("Courier New", Font.PLAIN, 24);
+	public static Font font = new Font("Courier New", Font.BOLD, 24);
 	public static Pan me;
 	
 	public static float zoomx = 0.0f;
@@ -22,6 +22,11 @@ public class Pan extends JPanel
 	
 	BufferedImage img;
 	Graphics imgG;
+	
+	BufferedImage[][] subImage;
+	int subSize = 100;
+	int subW;
+	int subH;
 	
 	int startX = 0;
 	int startY = 0;
@@ -57,11 +62,14 @@ public class Pan extends JPanel
 			if(db.getX()+db.block.width > maxX) maxX = (int)db.getX()+db.block.width;
 			
 			if(db.getY() < minY) minY = (int)db.getY();
-			if(db.getY() > maxY+db.block.height) maxY = (int)db.getY()+db.block.height;
+			if(db.getY()+db.block.height > maxY) maxY = (int)db.getY()+db.block.height;
 			
 			block_list.add(db.block);
 		}
 		
+		
+		
+		// Render the image
 		int img_width = maxX - minX;
 		int img_height = maxY - minY;
 		
@@ -78,6 +86,23 @@ public class Pan extends JPanel
 		for (int i = 0; i < block_list.size(); i++) 
 		{
 			block_list.get(i).draw(imgG);
+		}
+		
+		//Cut up into subimages for performance 
+		
+		subW = img_width/subSize + 1;
+		subH = img_height/subSize + 1;
+		
+		subImage = new BufferedImage[subW][subH];
+		
+		for(int i = 0; i < subW; i ++)
+		{
+			for(int j = 0; j < subH; j++)
+			{
+				subImage[i][j] = new BufferedImage(subSize,subSize,img.getType());
+				Graphics tempg = subImage[i][j].getGraphics();
+				tempg.drawImage(img, -i*subSize, -j*subSize, img.getWidth(), img.getHeight(), null);
+			}
 		}
 		
 	}
@@ -118,7 +143,24 @@ public class Pan extends JPanel
 			startY = Mouse.me.y;
 		}
 		
-		if(img != null) g.drawImage(img, (int)(zoomx*zoom), (int)(zoomy*zoom), (int)(img.getWidth()*zoom), (int)(img.getHeight()*zoom), null);
+		//if(img != null) g.drawImage(img, (int)(zoomx*zoom), (int)(zoomy*zoom), (int)(img.getWidth()*zoom), (int)(img.getHeight()*zoom), null);
+		
+		if(img != null)
+		{
+			for(int i = 0; i < subW; i ++)
+			{
+				for(int j = 0; j < subH; j++)
+				{
+					int dx = (int)(zoomx*zoom + i*(int)(subSize*zoom));
+					int dy = (int)(zoomy*zoom + j*(int)(subSize*zoom));
+					
+					if(dx >= -subSize*zoom && dx < x && dy >= -subSize*zoom && dy < y)//on screen
+					{
+						g.drawImage(subImage[i][j], dx, dy, (int)(subSize*zoom), (int)(subSize*zoom), null);
+					}
+				}
+			}
+		}
 		
 		
 	}
