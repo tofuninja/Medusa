@@ -1,6 +1,7 @@
 import java.awt.*;
 
 import javax.swing.JPanel;
+
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -9,7 +10,8 @@ public class Pan extends JPanel
 {
 	public int x = 1000, y = 900;
 	public Color backgroundColor = Color.white;
-	public static Font font = new Font("Courier New", Font.PLAIN, 12);
+	public static Font font = new Font("Courier New", Font.PLAIN, 24);
+	public static Pan me;
 	
 	public static float zoomx = 0.0f;
 	public static float zoomy = 0.0f;
@@ -20,11 +22,20 @@ public class Pan extends JPanel
 	
 	BufferedImage img;
 	Graphics imgG;
+	
+	int startX = 0;
+	int startY = 0;
 
 	public Pan() 
 	{
 		setBackground(Color.BLACK);
 		setPreferredSize(new Dimension(x, y));
+		me = this;
+		
+		Mouse m = new Mouse();
+		addMouseListener(m);
+		addMouseMotionListener(m);
+		addMouseWheelListener(m);
 	}
 
 	public void setDiag(Diagram d) 
@@ -54,7 +65,11 @@ public class Pan extends JPanel
 		int img_width = maxX - minX;
 		int img_height = maxY - minY;
 		
-		img = new BufferedImage(img_width, img_height, BufferedImage.TYPE_INT_ARGB);
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	    GraphicsDevice device = env.getDefaultScreenDevice();
+	    GraphicsConfiguration config = device.getDefaultConfiguration();
+	    img = config.createCompatibleImage(img_width, img_height, Transparency.TRANSLUCENT);
+	    
 		imgG = img.getGraphics();
 		
 		// Clears the background
@@ -92,7 +107,20 @@ public class Pan extends JPanel
 		g.setColor(backgroundColor);
 		g.fillRect(0, 0, x + 100, y + 100);
 		
+		zoom = (float)Math.pow(1.05f, Mouse.me.wheel);
+		
+		if(Mouse.me.Lpress)
+		{
+			zoomx += (Mouse.me.x - startX)/zoom;
+			zoomy += (Mouse.me.y - startY)/zoom;
+			
+			startX = Mouse.me.x;
+			startY = Mouse.me.y;
+		}
+		
 		if(img != null) g.drawImage(img, (int)(zoomx*zoom), (int)(zoomy*zoom), (int)(img.getWidth()*zoom), (int)(img.getHeight()*zoom), null);
+		
+		
 	}
 
 	private void renderLine(int x1, int y1, int x2, int y2, Color c) {
@@ -112,6 +140,17 @@ public class Pan extends JPanel
 			int x = x1 + (int) ((space * i + offset) * normx);
 			int y = y1 + (int) ((space * i + offset) * normy);
 			g.fillOval(x - dot / 2, y - dot / 2, dot, dot);
+		}
+	}
+	
+	
+	
+	public void click(int x, int y)
+	{
+		if(Mouse.me.Lpress)
+		{
+			startX = x;
+			startY = y;
 		}
 	}
 
