@@ -19,15 +19,12 @@ public class Pan extends JPanel
 	public static float zoom = 1.0f;
 
 	private Graphics g;
-	ArrayList<Block> block_list = new ArrayList<Block>();
+	Diagram diag;
 	
 	public BufferedImage img;
 	Graphics imgG;
 	
-	BufferedImage[][] subImage;
-	int subSize = 100;
-	int subW;
-	int subH;
+	Block title;
 	
 	int startX = 0;
 	int startY = 0;
@@ -46,34 +43,34 @@ public class Pan extends JPanel
 
 	public void setDiag(Diagram d) 
 	{
-		block_list.clear();
-		Block a = new Block("Folder: " + d.Folder + "\nClass Count: " + d.JavaBlocks.size(), 50, 0, new Color(193, 255, 194), font);
-		block_list.add(a);
+	    title = new Block("Folder: " + d.Folder + "\nClass Count: " + d.JavaBlocks.size(), 50, 0, new Color(193, 255, 194), font);
+		diag = d;
 		
-		int minX = 0;
-		int maxX = 0;
-		int minY = 0;
-		int maxY = 0;
+		int minX = 100000000;
+		int maxX = -100000000;
+		int minY = 100000000;
+		int maxY = -100000000;
 		
 		for (int i = 0; i < d.JavaBlocks.size(); i++) 
 		{
 			DiagramBlock db = d.JavaBlocks.get(i);
 			
-			if(db.getX() < minX) minX = (int)db.getX();
-			if(db.getX()+db.block.width > maxX) maxX = (int)db.getX()+db.block.width;
+			if(db.block.x < minX) minX = (int)db.block.x;
+			if(db.block.x + db.block.width > maxX) maxX = (int)db.block.x + db.block.width;
 			
-			if(db.getY() < minY) minY = (int)db.getY();
-			if(db.getY()+db.block.height > maxY) maxY = (int)db.getY()+db.block.height;
+			if(db.block.y < minY) minY = (int)db.block.y;
+			if(db.block.y + db.block.height > maxY) maxY = (int)db.block.y + db.block.height;
 			
-			block_list.add(db.block);
+			//System.out.println("X:" + db.block.x + "Y:" + db.block.y);
 		}
 		
 		
 		
 		// Render the image
-		int img_width = maxX - minX;
-		int img_height = maxY - minY;
+		int img_width = maxX - minX + 200;
+		int img_height = maxY - minY + 200;
 		
+		/*
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	    GraphicsDevice device = env.getDefaultScreenDevice();
 	    GraphicsConfiguration config = device.getDefaultConfiguration();
@@ -84,27 +81,9 @@ public class Pan extends JPanel
 		// Clears the background
 		imgG.setColor(backgroundColor);
 		imgG.fillRect(0, 0, img_width, img_height);
-		for (int i = 0; i < block_list.size(); i++) 
-		{
-			block_list.get(i).draw(imgG);
-		}
+		*/
 		
-		//Cut up into subimages for performance 
 		
-		subW = img_width/subSize + 1;
-		subH = img_height/subSize + 1;
-		
-		subImage = new BufferedImage[subW][subH];
-		
-		for(int i = 0; i < subW; i ++)
-		{
-			for(int j = 0; j < subH; j++)
-			{
-				subImage[i][j] = new BufferedImage(subSize,subSize,img.getType());
-				Graphics tempg = subImage[i][j].getGraphics();
-				tempg.drawImage(img, -i*subSize, -j*subSize, img.getWidth(), img.getHeight(), null);
-			}
-		}
 		
 	}
 
@@ -146,23 +125,40 @@ public class Pan extends JPanel
 		
 		//if(img != null) g.drawImage(img, (int)(zoomx*zoom), (int)(zoomy*zoom), (int)(img.getWidth()*zoom), (int)(img.getHeight()*zoom), null);
 		
-		if(img != null)
+		if(diag != null)
 		{
-			for(int i = 0; i < subW; i ++)
+			int dx = (int)(zoomx*zoom + (int)(title.x*zoom));
+			int dy = (int)(zoomy*zoom + (int)(title.y*zoom));
+			if(dx >= -title.width*zoom && dx < x && dy >= -title.height*zoom && dy < y)//on screen
+				g.drawImage(title.img, dx, dy, (int)(title.img.getWidth()*zoom), (int)(title.img.getHeight()*zoom), null);
+			
+			for (int i = 0; i < diag.JavaBlocks.size(); i++) 
 			{
-				for(int j = 0; j < subH; j++)
+				DiagramBlock db = diag.JavaBlocks.get(i);
+				Block b = db.block;
+				dx = (int)(zoomx*zoom + (int)(b.x*zoom));
+				dy = (int)(zoomy*zoom + (int)(b.y*zoom));
+				if(dx >= -b.width*zoom && dx < x && dy >= -b.height*zoom && dy < y)//on screen
+					g.drawImage(b.img, dx, dy, (int)(b.img.getWidth()*zoom), (int)(b.img.getHeight()*zoom), null);
+				
+				
+				dx += (int)(b.width*zoom) /2;
+				dy += (int)(b.height*zoom) /2;
+				
+				for(int j = 0; j < db.Class.referenceClasses.size();j++)
 				{
-					int dx = (int)(zoomx*zoom + i*(int)(subSize*zoom));
-					int dy = (int)(zoomy*zoom + j*(int)(subSize*zoom));
+					Block b2 = db.Class.referenceClasses.get(j).diagBlock.block;
+					int dx2 = (int)(zoomx*zoom + (int)(b2.x*zoom)) + (int)(b2.width*zoom) /2;
+					int dy2 = (int)(zoomy*zoom + (int)(b2.y*zoom)) + (int)(b2.height*zoom) /2;
 					
-					if(dx >= -subSize*zoom && dx < x && dy >= -subSize*zoom && dy < y)//on screen
-					{
-						g.drawImage(subImage[i][j], dx, dy, (int)(subSize*zoom), (int)(subSize*zoom), null);
-					}
+					g.setColor(Color.blue);
+					g.drawLine(dx, dy, dx2, dy2);
 				}
+				
 			}
 		}
 		
+
 		g.setColor(backgroundColor);
 		g.fillRect(0, y-15, 120, 15);
 		g.setFont(font2);

@@ -2,84 +2,33 @@ import java.awt.Color;
 import java.util.*;
 
 class DiagramBlock {
-	private String className;
-	private ArrayList<String> methodNames;
-	private ArrayList<String> variableNames;
-	private float x;
-	private float y;
+	JavaClass Class;
 	public Block block;
 	
-	public DiagramBlock(String className, ArrayList<String> methodNames, ArrayList<String> variableNames, float x, float y) {
-		this.className = className;
-		this.methodNames = methodNames;
-		this.variableNames = variableNames;
-		this.x = x;
-		this.y = y;
+	public float accelx = 0.0f;
+	public float accely = 0.0f;
+	
+	public DiagramBlock(JavaClass c, int x, int y) 
+	{	
+		Class = c;
+		c.diagBlock = this;
+		String str = c.className + "\n\n"; 
 		
-		
-		String str = className;
-		
-		for(int j = 0; j <methodNames.size(); j++)
+		for(int j = 0; j < c.methodNames.size(); j++)
 		{
-			str += methodNames.get(j) + "\n";
+			str += c.methodNames.get(j) + "\n";
 		}
 		
 		str += "\n";
 		
-		for(int j = 0; j < variableNames.size(); j++)
+		for(int j = 0; j < c.variableNames.size(); j++)
 		{
-			str += variableNames.get(j) + "\n";
+			str += c.variableNames.get(j) + "\n";
 		}
 		
-		
-		block = new Block(str, (int) x, (int) y,new Color(196, 121, 126), Pan.font);
+		block = new Block(str, x, y,new Color(196, 121, 126), Pan.font);
 		
 	} 
-	
-	// Getter and setter for class name
-	public String getClassName() {
-		return className;
-	}
-	public void setClassName(String className) {
-		this.className = className;
-	}
-
-	public ArrayList<String> getMethodNames() {
-		return methodNames;
-	}
-
-	public void setMethodNames(ArrayList<String> methodNames) {
-		this.methodNames = methodNames;
-	}
-
-	public ArrayList<String> getVariableNames() {
-		return variableNames;
-	}
-
-	public void setVariableNames(ArrayList<String> variableNames) {
-		this.variableNames = variableNames;
-	}
-	
-	// Getter and setter for x
-	public float getX() {
-		return x;
-	}
-	public void setX(float x) {
-		this.x = x;
-	}
-	
-	// Getter and setter for y
-	public float getY() {
-		return y;
-	}
-	public void setY(float y) {
-		this.y = y;
-	}
-	
-	@Override
-	public String toString() {
-		return className + ": (" + x + ", " + y + ")";
-	}
 }
 
 class Diagram {
@@ -89,28 +38,108 @@ class Diagram {
 	public Diagram(ArrayList<JavaClass> JavaClasses, String folder) 
 	{
 		Folder = folder;
-		for( int i=0; i<JavaClasses.size(); i++ ) 
+		for(int i = 0; i < JavaClasses.size(); i++ ) 
 		{
 			JavaClass jc = JavaClasses.get(i);
-			DiagramBlock b = new DiagramBlock(jc.className, jc.methodNames, jc.variableNames, 50 + 200*(i%5), 100 + (i/5)*100);
+			
+			// Find all connections
+			for(int j = 0; j < JavaClasses.size(); j++ ) 
+			{
+				for(int k = 0; k < jc.referenceNames.size(); k++)
+				{
+					if(jc.referenceNames.get(k).equals(JavaClasses.get(j).className))
+					{
+						jc.referenceClasses.add(JavaClasses.get(j));
+					}
+				}	
+			}
+			
+			System.out.println(jc.referenceClasses.size());
+			
+			
+			DiagramBlock b = new DiagramBlock(jc, 50 + 200*(i%5), 100 + (i/5)*100);
 			JavaBlocks.add(b);
 		}
-	}
-	
-	public void printBlockCoordinates() {
-		for( int i=0; i<JavaBlocks.size(); i++ ) {
-			DiagramBlock b = JavaBlocks.get(i);
-			System.out.println(b);
-		}
-	}
-	
-	public String getCoordinateForJavaClass(String name) {
-		for( int i=0; i<JavaBlocks.size(); i++ ) {
-			DiagramBlock b = JavaBlocks.get(i);
-			if( b.getClassName().equals(name) ) {
-				return b.getX() + "," + b.getY();
+		
+		
+		// arranging blocks, could take a while
+		for(int i = 0; i < 10000; i++)
+		{
+			
+			for(int j = 0; j < JavaBlocks.size(); j++)
+			{
+				DiagramBlock db = JavaBlocks.get(j);
+				for(int k = 0; k < JavaBlocks.size(); k++)
+				{
+					DiagramBlock db2 = JavaBlocks.get(k);
+					
+					double dist = (db.block.x-db2.block.x)*(db.block.x-db2.block.x) + (db.block.y-db2.block.y)*(db.block.y-db2.block.y);
+					dist = Math.sqrt(dist) + 0.01f;
+					
+
+					double normx = (db.block.x-db2.block.x)/dist;
+					double normy = (db.block.y-db2.block.y)/dist;
+					
+					double force = 100.0/(dist*dist);
+					
+					double r1 = Math.sqrt(db.block.width*db.block.width + db.block.height*db.block.height)/2;
+					force*=r1;
+					//double r2 = Math.sqrt(db2.block.width*db2.block.width + db2.block.height*db2.block.height)/2;
+					
+					//if(dist < r1+r2)
+					//{
+						//force += 10;
+						
+					//}
+					
+
+					
+					db2.accelx += (float)(normx*force);
+					db2.accely += (float)(normy*force);
+					
+				}
 			}
+			
+			
+			for(int j = 0; j < JavaBlocks.size(); j++)
+			{
+				DiagramBlock db = JavaBlocks.get(j);
+				
+				double dist = (db.block.x)*(db.block.x) + (db.block.y)*(db.block.y);
+				dist = Math.sqrt(dist) + 1.0;
+				
+				double normx = (db.block.x)/dist;
+				double normy = (db.block.y)/dist;
+				
+				double force = -0.00000001*(dist*dist);
+				
+				
+				db.accelx += (float)(normx*force);
+				db.accely += (float)(normy*force);
+					
+				
+			}
+			
+			
+			
+			//Friction & apply accel
+			for(int j = 0; j < JavaBlocks.size(); j++)
+			{
+				DiagramBlock db = JavaBlocks.get(j);
+				db.accelx *= 0.8f;
+				db.accely *= 0.8f;
+				
+				if(db.accelx > 100000.0f) db.accelx = 1000;
+				if(db.accelx < -100000.0f) db.accelx = -1000;
+				if(db.accely > 100000.0f) db.accely = 1000;
+				if(db.accely < -100000.0f) db.accely = -1000;
+				
+				db.block.x += db.accelx;
+				db.block.y += db.accely;
+			}
+			
 		}
-		return null;
+		
 	}
+	
 }
