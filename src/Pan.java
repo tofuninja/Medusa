@@ -83,10 +83,10 @@ public class Pan extends JPanel
 		
 		if(diag != null)
 		{
-			int dx = (int)(zoomx*zoom + (int)(title.x*zoom));
-			int dy = (int)(zoomy*zoom + (int)(title.y*zoom));
-			if(dx >= -title.width*zoom && dx < x && dy >= -title.height*zoom && dy < y)//on screen
-				g.drawImage(title.img, dx, dy, (int)(title.img.getWidth()*zoom), (int)(title.img.getHeight()*zoom), null);
+			
+			int dx;
+			int dy;
+			
 			
 			for (int i = 0; i < diag.JavaBlocks.size(); i++) 
 			{
@@ -94,10 +94,6 @@ public class Pan extends JPanel
 				Block b = db.block;
 				dx = (int)(zoomx*zoom + (int)(b.x*zoom));
 				dy = (int)(zoomy*zoom + (int)(b.y*zoom));
-				if(dx >= -b.width*zoom && dx < x && dy >= -b.height*zoom && dy < y)//on screen
-					g.drawImage(b.img, dx, dy, (int)(b.img.getWidth()*zoom), (int)(b.img.getHeight()*zoom), null);
-				
-				
 				dx += (int)(b.width*zoom) /2;
 				dy += (int)(b.height*zoom) /2;
 				
@@ -112,6 +108,24 @@ public class Pan extends JPanel
 				}
 				
 			}
+			
+			
+			
+			dx = (int)(zoomx*zoom + (int)(title.x*zoom));
+			dy = (int)(zoomy*zoom + (int)(title.y*zoom));
+			if(dx >= -title.width*zoom && dx < x && dy >= -title.height*zoom && dy < y)//on screen
+				g.drawImage(title.img, dx, dy, (int)(title.img.getWidth()*zoom), (int)(title.img.getHeight()*zoom), null);
+			
+			for (int i = 0; i < diag.JavaBlocks.size(); i++) 
+			{
+				DiagramBlock db = diag.JavaBlocks.get(i);
+				Block b = db.block;
+				dx = (int)(zoomx*zoom + (int)(b.x*zoom));
+				dy = (int)(zoomy*zoom + (int)(b.y*zoom));
+				if(dx >= -b.width*zoom && dx < x && dy >= -b.height*zoom && dy < y)//on screen
+					g.drawImage(b.img, dx, dy, (int)(b.img.getWidth()*zoom), (int)(b.img.getHeight()*zoom), null);
+			}
+			
 		}
 		
 
@@ -165,11 +179,8 @@ public class Pan extends JPanel
 		imgG.setColor(backgroundColor);
 		imgG.fillRect(0, 0, img_width, img_height);
 		
-		
-		
-		int dx = (int)(title.x) - minX;
-		int dy = (int)(title.y) - minY;
-		imgG.drawImage(title.img, dx, dy, title.img.getWidth(), title.img.getHeight(), null);
+		int dx;
+		int dy; 
 		
 		for (int i = 0; i < diag.JavaBlocks.size(); i++) 
 		{
@@ -177,9 +188,6 @@ public class Pan extends JPanel
 			Block b = db.block;
 			dx = (int)(b.x) - minX;
 			dy = (int)(b.y) - minY;
-			imgG.drawImage(b.img, dx, dy, b.img.getWidth(), b.img.getHeight(), null);
-			
-			
 			dx += (int)(b.width) /2;
 			dy += (int)(b.height) /2;
 			
@@ -196,6 +204,19 @@ public class Pan extends JPanel
 		}
 		
 		
+		dx = (int)(title.x) - minX;
+		dy = (int)(title.y) - minY;
+		imgG.drawImage(title.img, dx, dy, title.img.getWidth(), title.img.getHeight(), null);
+		
+		for (int i = 0; i < diag.JavaBlocks.size(); i++) 
+		{
+			DiagramBlock db = diag.JavaBlocks.get(i);
+			Block b = db.block;
+			dx = (int)(b.x) - minX;
+			dy = (int)(b.y) - minY;
+			imgG.drawImage(b.img, dx, dy, b.img.getWidth(), b.img.getHeight(), null);
+			
+		}
 		return img;
 	}
 
