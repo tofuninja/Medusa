@@ -57,7 +57,7 @@ class Diagram {
 			System.out.println(jc.referenceClasses.size());
 			
 			
-			DiagramBlock b = new DiagramBlock(jc, 50 + 200*(i%5), 100 + (i/5)*100);
+			DiagramBlock b = new DiagramBlock(jc, 50 + 800*(i%5), 100 + (i/5)*600);
 			JavaBlocks.add(b);
 		}
 		
