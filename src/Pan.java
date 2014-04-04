@@ -11,6 +11,7 @@ public class Pan extends JPanel
 	public int x = 1000, y = 900;
 	public Color backgroundColor = Color.white;
 	public static Font font = new Font("Courier New", Font.BOLD, 24);
+	public static Font font2 = new Font("Courier New", Font.PLAIN, 12);
 	public static Pan me;
 	
 	public static float zoomx = 0.0f;
@@ -161,6 +162,12 @@ public class Pan extends JPanel
 				}
 			}
 		}
+		
+		g.setColor(backgroundColor);
+		g.fillRect(0, y-15, 120, 15);
+		g.setFont(font2);
+		g.setColor(Color.black);
+		g.drawString("Zoom:"+zoom, 0, y);
 		
 		
 	}
