@@ -54,7 +54,7 @@ class Diagram {
 				}	
 			}
 			
-			System.out.println(jc.referenceClasses.size());
+			//System.out.println(jc.referenceClasses.size());
 			
 			
 			DiagramBlock b = new DiagramBlock(jc, 50 + 800*(i%5), 100 + (i/5)*600);
@@ -111,7 +111,7 @@ class Diagram {
 				double normx = (db.block.x)/dist;
 				double normy = (db.block.y)/dist;
 				
-				double force = -0.00000001*(dist*dist);
+				double force = -0.0000001*(dist*dist);
 				
 				
 				db.accelx += (float)(normx*force);

@@ -20,10 +20,6 @@ public class Pan extends JPanel
 
 	private Graphics g;
 	Diagram diag;
-	
-	public BufferedImage img;
-	Graphics imgG;
-	
 	Block title;
 	
 	int startX = 0;
@@ -45,46 +41,6 @@ public class Pan extends JPanel
 	{
 	    title = new Block("Folder: " + d.Folder + "\nClass Count: " + d.JavaBlocks.size(), 50, 0, new Color(193, 255, 194), font);
 		diag = d;
-		
-		int minX = 100000000;
-		int maxX = -100000000;
-		int minY = 100000000;
-		int maxY = -100000000;
-		
-		for (int i = 0; i < d.JavaBlocks.size(); i++) 
-		{
-			DiagramBlock db = d.JavaBlocks.get(i);
-			
-			if(db.block.x < minX) minX = (int)db.block.x;
-			if(db.block.x + db.block.width > maxX) maxX = (int)db.block.x + db.block.width;
-			
-			if(db.block.y < minY) minY = (int)db.block.y;
-			if(db.block.y + db.block.height > maxY) maxY = (int)db.block.y + db.block.height;
-			
-			//System.out.println("X:" + db.block.x + "Y:" + db.block.y);
-		}
-		
-		
-		
-		// Render the image
-		int img_width = maxX - minX + 200;
-		int img_height = maxY - minY + 200;
-		
-		/*
-		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	    GraphicsDevice device = env.getDefaultScreenDevice();
-	    GraphicsConfiguration config = device.getDefaultConfiguration();
-	    img = config.createCompatibleImage(img_width, img_height, Transparency.TRANSLUCENT);
-	    
-		imgG = img.getGraphics();
-		
-		// Clears the background
-		imgG.setColor(backgroundColor);
-		imgG.fillRect(0, 0, img_width, img_height);
-		*/
-		
-		
-		
 	}
 
 	public Pan(int x, int y) {
@@ -166,6 +122,81 @@ public class Pan extends JPanel
 		g.drawString("Zoom:"+zoom, 0, y);
 		
 		
+	}
+	
+	
+	public BufferedImage renderToImage()
+	{
+		int minX = 100000000;
+		int maxX = -100000000;
+		int minY = 100000000;
+		int maxY = -100000000;
+		
+		for (int i = 0; i < diag.JavaBlocks.size(); i++) 
+		{
+			DiagramBlock db = diag.JavaBlocks.get(i);
+			
+			if((int)db.block.x < minX) minX = (int)db.block.x;
+			if(((int)db.block.x + db.block.width) > maxX) maxX = (int)db.block.x + db.block.width;
+			
+			if((int)db.block.y < minY) minY = (int)db.block.y;
+			if(((int)db.block.y + db.block.height) > maxY) maxY = (int)db.block.y + db.block.height;
+			
+			//System.out.println("X:" + db.block.x + "Y:" + db.block.y);
+		}
+		
+		System.out.println("minX " + minX);
+		System.out.println("miny " + minX);
+		System.out.println("maxX " + maxX);
+		System.out.println("maxY " + maxY);
+		
+		// Render the image
+		int img_width = maxX - minX + 200;
+		int img_height = maxY - minY + 200;
+		
+		System.out.println("img_width " + img_width);
+		System.out.println("img_height " + img_height);
+		
+	    BufferedImage img = new BufferedImage(img_width,img_height,BufferedImage.TYPE_INT_ARGB);
+	    
+		Graphics imgG = img.getGraphics();
+		
+		// Clears the background
+		imgG.setColor(backgroundColor);
+		imgG.fillRect(0, 0, img_width, img_height);
+		
+		
+		
+		int dx = (int)(title.x) - minX;
+		int dy = (int)(title.y) - minY;
+		imgG.drawImage(title.img, dx, dy, title.img.getWidth(), title.img.getHeight(), null);
+		
+		for (int i = 0; i < diag.JavaBlocks.size(); i++) 
+		{
+			DiagramBlock db = diag.JavaBlocks.get(i);
+			Block b = db.block;
+			dx = (int)(b.x) - minX;
+			dy = (int)(b.y) - minY;
+			imgG.drawImage(b.img, dx, dy, b.img.getWidth(), b.img.getHeight(), null);
+			
+			
+			dx += (int)(b.width) /2;
+			dy += (int)(b.height) /2;
+			
+			for(int j = 0; j < db.Class.referenceClasses.size();j++)
+			{
+				Block b2 = db.Class.referenceClasses.get(j).diagBlock.block;
+				int dx2 = (int)(b2.x) + (int)(b2.width) /2 - minX;
+				int dy2 = (int)(b2.y) + (int)(b2.height) /2 - minY;
+				
+				imgG.setColor(Color.blue);
+				imgG.drawLine(dx, dy, dx2, dy2);
+			}
+			
+		}
+		
+		
+		return img;
 	}
 
 	/*

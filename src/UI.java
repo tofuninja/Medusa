@@ -138,6 +138,12 @@ public class UI extends JPanel implements ActionListener
 	
 	private  void SaveImage()
 	{
+		if(Pan.me.diag == null)
+		{
+			infoBox("Nothing to save.","Error");
+			return;
+		}
+		
 		fc = new JFileChooser();
 		fc.setSelectedFile(new File("diagram.png"));
 		int returnVal = fc.showSaveDialog(this);
@@ -152,7 +158,7 @@ public class UI extends JPanel implements ActionListener
 			
 			try 
 			{
-				ImageIO.write(Pan.me.img, "png",file);
+				ImageIO.write(Pan.me.renderToImage(), "png",file);
 			}
 			catch (IOException e) 
 			{
@@ -168,6 +174,14 @@ public class UI extends JPanel implements ActionListener
 		
 		
 	}
+	
+
+
+
+	public static void infoBox(String infoMessage, String title)
+    {
+        JOptionPane.showMessageDialog(null, infoMessage, title, JOptionPane.INFORMATION_MESSAGE);
+    }
 	
 
 	public static void main(String[] args) 
