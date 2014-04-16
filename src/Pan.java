@@ -63,17 +63,29 @@ public class Pan extends JPanel
 
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
 		// Clears the background
 		g.setColor(backgroundColor);
 		g.fillRect(0, 0, x + 100, y + 100);
 		
+		float prezoom = zoom;
 		zoom = (float)Math.pow(1.05f, Mouse.me.wheel);
+		
+		if(Mouse.me.Mpress)
+		{
+			Mouse.me.wheel = 0;
+			zoom = 1.0f;
+		}
+		
+		zoomx -= (Mouse.me.x/zoom - Mouse.me.x/prezoom);
+		zoomy -= (Mouse.me.y/zoom - Mouse.me.y/prezoom);
+		
 		
 		if(Mouse.me.Lpress)
 		{
-			zoomx += (Mouse.me.x - startX)/zoom;
-			zoomy += (Mouse.me.y - startY)/zoom;
+			zoomx += (startX - Mouse.me.x)/zoom;
+			zoomy += (startY - Mouse.me.y)/zoom;
 			
 			startX = Mouse.me.x;
 			startY = Mouse.me.y;
@@ -92,16 +104,17 @@ public class Pan extends JPanel
 			{
 				DiagramBlock db = diag.JavaBlocks.get(i);
 				Block b = db.block;
-				dx = (int)(zoomx*zoom + (int)(b.x*zoom));
-				dy = (int)(zoomy*zoom + (int)(b.y*zoom));
+				dx = (int)(b.x*zoom - zoomx*zoom);
+				dy = (int)(b.y*zoom - zoomy*zoom);
 				dx += (int)(b.width*zoom) /2;
 				dy += (int)(b.height*zoom) /2;
 				
+				// Draw Connection lines 
 				for(int j = 0; j < db.Class.referenceClasses.size();j++)
 				{
 					Block b2 = db.Class.referenceClasses.get(j).diagBlock.block;
-					int dx2 = (int)(zoomx*zoom + (int)(b2.x*zoom)) + (int)(b2.width*zoom) /2;
-					int dy2 = (int)(zoomy*zoom + (int)(b2.y*zoom)) + (int)(b2.height*zoom) /2;
+					int dx2 = (int)(b2.x*zoom - zoomx*zoom) + (int)(b2.width*zoom) /2;
+					int dy2 = (int)(b2.y*zoom - zoomy*zoom) + (int)(b2.height*zoom) /2;
 					
 					g.setColor(Color.blue);
 					g.drawLine(dx, dy, dx2, dy2);
@@ -111,8 +124,8 @@ public class Pan extends JPanel
 			
 			
 			
-			dx = (int)(zoomx*zoom + (int)(title.x*zoom));
-			dy = (int)(zoomy*zoom + (int)(title.y*zoom));
+			dx = (int)(title.x*zoom - zoomx*zoom);
+			dy = (int)(title.y*zoom - zoomy*zoom );
 			if(dx >= -title.width*zoom && dx < x && dy >= -title.height*zoom && dy < y)//on screen
 				g.drawImage(title.img, dx, dy, (int)(title.img.getWidth()*zoom), (int)(title.img.getHeight()*zoom), null);
 			
@@ -120,8 +133,8 @@ public class Pan extends JPanel
 			{
 				DiagramBlock db = diag.JavaBlocks.get(i);
 				Block b = db.block;
-				dx = (int)(zoomx*zoom + (int)(b.x*zoom));
-				dy = (int)(zoomy*zoom + (int)(b.y*zoom));
+				dx = (int)(b.x*zoom - zoomx*zoom);
+				dy = (int)(b.y*zoom - zoomy*zoom);
 				if(dx >= -b.width*zoom && dx < x && dy >= -b.height*zoom && dy < y)//on screen
 					g.drawImage(b.img, dx, dy, (int)(b.img.getWidth()*zoom), (int)(b.img.getHeight()*zoom), null);
 			}
@@ -133,7 +146,7 @@ public class Pan extends JPanel
 		g.fillRect(0, y-15, 120, 15);
 		g.setFont(font2);
 		g.setColor(Color.black);
-		g.drawString("Zoom:"+zoom, 0, y);
+		g.drawString("Zoom:"+zoom + "Zoomx:" + zoomx + "Zoomy:" + zoomy, 0, y);
 		
 		
 	}

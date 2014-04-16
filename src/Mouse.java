@@ -8,6 +8,7 @@ public class Mouse implements MouseListener , MouseMotionListener , MouseWheelLi
 	public int y = 0;
 	public boolean Lpress = false;
 	public boolean Rpress = false;
+	public boolean Mpress = false;
 	public boolean hover = true;
 	public int wheel = 0;
 
@@ -26,7 +27,7 @@ public class Mouse implements MouseListener , MouseMotionListener , MouseWheelLi
 		if(e.getButton()==1)
 			Lpress = true;
 		if(e.getButton()==2)
-			wheel = 0;
+			Mpress = true;
 		if(e.getButton()==3)
 			Rpress = true;
 		
@@ -37,6 +38,8 @@ public class Mouse implements MouseListener , MouseMotionListener , MouseWheelLi
 	public void mouseReleased(MouseEvent e) {
 		if(e.getButton()==1)
 			Lpress = false;
+		if(e.getButton()==2)
+			Mpress = false;
 		if(e.getButton()==3)
 			Rpress = false;
 
