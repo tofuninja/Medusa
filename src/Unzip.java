@@ -38,40 +38,42 @@ public class Unzip
     	}
  
     	//get the zip file content
-    	ZipInputStream zis = 
-    		new ZipInputStream(new FileInputStream(zipFile));
+    	ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
     	//get the zipped file list entry
     	ZipEntry ze = zis.getNextEntry();
  
-    	while(ze!=null){
- 
-    	   String fileName = ze.getName();
-           File newFile = new File(output + File.separator + fileName);
-           
-            //create all non exists folders
-            //else you will hit FileNotFoundException for compressed folder
+        //create all non exists folders
+        //else you will hit FileNotFoundException for compressed folder
+        while(ze!=null){    
             if (ze.isDirectory()) {
+                String fileName = ze.getName();
+                File newFile = new File(output + File.separator + fileName);
                 newFile.mkdirs();
-                System.out.println(fileName+": DIRECTORY!");
             }
-            else {
-                System.out.println(fileName+": FILE!");
+            ze = zis.getNextEntry();
+        }
+
+        // Now that folders have been creates, unzip files
+        zis = new ZipInputStream(new FileInputStream(zipFile));
+        ze = zis.getNextEntry();
+        while(ze!=null){
+            if (!ze.isDirectory()) {
+                String fileName = ze.getName();
+                File newFile = new File(output + File.separator + fileName);
                 FileOutputStream fos = new FileOutputStream(newFile);             
                 int len;
                 while ((len = zis.read(buffer)) > 0) {
            		   fos.write(buffer, 0, len);
                 }
                 fos.close();   
-            } 
+            }
             ze = zis.getNextEntry();
     	}
  
         zis.closeEntry();
     	zis.close();
- 
-    	System.out.println("Done");
- 
-    }catch(IOException ex){
+  
+    } catch(IOException ex){
        ex.printStackTrace(); 
     }
    }    

@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
+import java.nio.file.Files;
  
 public class UrlResolver {
 
@@ -10,13 +11,14 @@ public class UrlResolver {
 	private String filename;
 
 	public String resolve () {
-		String command;
+		String command = null;
+		String output = null;
 		switch (type) {
 			case "github":
 				command = "git clone "+url+" "+filename ;
-		 		String output = executeCommand(command);
+		 		output = executeCommand(command);
 				break;
-			case "zipfile":
+			case "webzip":
 				try {
 					saveUrl(url);
 				}
@@ -25,6 +27,19 @@ public class UrlResolver {
 				}
 				Unzip uz = new Unzip(filename+".zip", filename);
 				uz.unZipIt();
+				output = executeCommand ("rm "+filename+".zip") ;
+				break;
+			case "localZip":
+				String localDir = "Downloads/"+UUID.randomUUID().toString() ;
+				Unzip unzp = new Unzip(filename, localDir);
+				unzp.unZipIt();
+				filename = localDir;
+				break;
+			case "couldNotResolve":
+				filename = "couldNotResolve";
+				break;
+			case "localDir":
+			default:
 				break;
 		}
 		return filename;
@@ -49,15 +64,30 @@ public class UrlResolver {
 
 	public UrlResolver(String p_url) {
 		String last3 = null;
-		if (p_url.length() > 3)
+		if (p_url.length() > 3) 
 			last3 = p_url.substring(p_url.length()-3);
-		if (last3 != null && last3.equals("zip"))
-			type = "zipfile";
-		if ( p_url.contains("://github.com") || p_url.contains("://www.github.com") )
-			type = "github"; 
+
+		type = "couldNotResolve";
+
+		File f = new File(p_url);
+		if (f.exists()) {
+			type = (last3 != null && last3.equals("zip")) ? "localZip" : "localDir";
+			filename = p_url;
+		}
+		else {
+			if (last3 != null && last3.equals("zip")) {
+				if ( p_url.contains("://") )
+					type = "webzip";
+			}
+			else if ( p_url.contains("://github.com") || p_url.contains("://www.github.com") ) {
+				type = "github";
+			}
+			UUID uniq = UUID.randomUUID();
+      		filename = "Downloads/" + uniq.toString() ;
+      	}
+
 		url = p_url;
-		UUID uniq = UUID.randomUUID();
-      	filename = "Downloads/" + uniq.toString() ;
+		
 	}
 
 	public void saveUrl(final String urlString)
