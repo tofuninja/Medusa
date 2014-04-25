@@ -1,14 +1,19 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.*;
 
-
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.imageio.*;
 
 public class UI extends JPanel implements ActionListener 
 {
-	public static Pan currentPan;
 	static JFrame frame;
 	//static private final String newline = "\n";
 	//JTextArea adr;
@@ -19,12 +24,17 @@ public class UI extends JPanel implements ActionListener
 	JMenu menu;
 	JMenuItem mi;
 	JMenuItem save;
+	JTabbedPane tabbedPane;
 	
 	public UI() 
 	{
-		
-		// mi.addActionListener(this);
+		setPreferredSize(new Dimension(500, 500));
+		BorderLayout bl = new BorderLayout();
+		this.setLayout(bl);
+		tabbedPane = new JTabbedPane();
+		this.add(tabbedPane,BorderLayout.CENTER);
 	}
+	
 
 	public JMenuBar menu() 
 	{
@@ -43,27 +53,17 @@ public class UI extends JPanel implements ActionListener
 		return mb;
 	}
 
-	/*
-	public Container create() 
-	{
-		JPanel cp = new JPanel(new BorderLayout());
-		cp.setOpaque(true);
-		adr = new JTextArea(5, 30);
-		adr.setEditable(false);
-		sp = new JScrollPane(adr);
-		cp.add(sp, BorderLayout.CENTER);
-		return cp;
-	}*/
-
 	
 	/// Actions listener for the file dialog 
 	public void actionPerformed(ActionEvent e) 
 	{
 		if (e.getSource() == mi) 
 		{
-			fc = new JFileChooser();
+			JFileChooser fc = new JFileChooser();
 			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			int returnVal = fc.showOpenDialog(UI.this);
+			int returnVal = fc.showOpenDialog(this);
+			
+			String m_folder_path;
 
 			if (returnVal == JFileChooser.APPROVE_OPTION) 
 			{
@@ -77,33 +77,9 @@ public class UI extends JPanel implements ActionListener
 				// Return and do nothing
 				return;
 			}
-
-			// adr.setCaretPosition(adr.getDocument().getLength());
-
-			ArrayList<String> arr = DirCrawler
-					.getFlatJavaFilesList(m_folder_path);
-			ArrayList<JavaClass> class_list = new ArrayList<JavaClass>();
-
-			for (int i = 0; i < arr.size(); i++) 
-			{
-				ArrayList<JavaClass> classes;
-				try 
-				{
-					classes = FileDetails.getClasses(arr.get(i));
-				} 
-				catch (Exception e1) 
-				{
-					continue;// error in file
-				}
-
-				for (int j = 0; j < classes.size(); j++) 
-				{
-					class_list.add(classes.get(j));
-				}
-			}
-
-			Diagram diag = new Diagram(class_list, m_folder_path);
-			currentPan.setDiag(diag);
+			
+			tabFrame tf = new tabFrame(m_folder_path);
+			tabbedPane.addTab(m_folder_path, tf);
 
 		} 
 		else if (e.getSource() == save) 
@@ -112,33 +88,13 @@ public class UI extends JPanel implements ActionListener
 			
 		}
 	}
-
-	private static void showWindow() 
-	{
-		frame = new JFrame("Medusa");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// frame.add(new UI());
-		UI ui = new UI();
-		frame.setJMenuBar(ui.menu());
-		//frame.setContentPane(ui.create());
-		//frame.setSize(450, 260);
-		frame.setVisible(true);
-
-		Pan p = new Pan();
-		currentPan = p;
-
-		frame.getContentPane().add(p);
-		//frame.setResizable(false);
-		frame.pack();
-
-		renderThread t = new renderThread(p);
-		t.start();
-
-	}
+	
+	
 	
 	private  void SaveImage()
 	{
-		if(Pan.me.diag == null)
+		tabFrame tb = (tabFrame)tabbedPane.getSelectedComponent();
+		if(tb == null)
 		{
 			infoBox("Nothing to save.","Error");
 			return;
@@ -158,7 +114,7 @@ public class UI extends JPanel implements ActionListener
 			
 			try 
 			{
-				ImageIO.write(Pan.me.renderToImage(), "png",file);
+				ImageIO.write(tb.pan.renderToImage(), "png",file);
 			}
 			catch (IOException e) 
 			{
@@ -181,7 +137,6 @@ public class UI extends JPanel implements ActionListener
 	
 
 
-
 	public static void infoBox(String infoMessage, String title)
     {
         JOptionPane.showMessageDialog(null, infoMessage, title, JOptionPane.INFORMATION_MESSAGE);
@@ -195,35 +150,26 @@ public class UI extends JPanel implements ActionListener
 			public void run() 
 			{
 				UIManager.put("swing.boldMetal", Boolean.FALSE);
-				showWindow();
+				
+				
+				frame = new JFrame("Medusa");
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				// frame.add(new UI());
+				frame.setLayout(new BorderLayout());
+				
+				UI ui = new UI();
+				frame.setJMenuBar(ui.menu());
+				//frame.setContentPane(ui.create());
+				frame.setSize(500, 500);
+				frame.setVisible(true);
+
+				frame.add(ui, BorderLayout.CENTER);
+				
+				//frame.setResizable(false);
+				frame.pack();
+				
 			}
 		});
 	}
 }
 
-class renderThread extends Thread 
-{
-	Pan currentPan;
-
-	public renderThread(Pan p) 
-	{
-		currentPan = p;
-	}
-
-	public void run() 
-	{
-		while (true) 
-		{
-			try 
-			{
-				currentPan.repaint();
-				Thread.sleep(10);
-			} 
-			catch (InterruptedException e) 
-			{
-				break;
-			}
-
-		}
-	}
-}

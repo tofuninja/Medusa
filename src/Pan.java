@@ -12,11 +12,10 @@ public class Pan extends JPanel
 	public Color backgroundColor = Color.white;
 	public static Font font = new Font("Courier New", Font.BOLD, 24);
 	public static Font font2 = new Font("Courier New", Font.PLAIN, 12);
-	public static Pan me;
 	
-	public static float zoomx = 0.0f;
-	public static float zoomy = 0.0f;
-	public static float zoom = 1.0f;
+	public float zoomx = 0.0f;
+	public float zoomy = 0.0f;
+	public float zoom = 1.0f;
 
 	private Graphics g;
 	Diagram diag;
@@ -24,17 +23,21 @@ public class Pan extends JPanel
 	
 	int startX = 0;
 	int startY = 0;
+	
+	Mouse mouse;
 
 	public Pan() 
 	{
 		setBackground(Color.BLACK);
 		setPreferredSize(new Dimension(x, y));
-		me = this;
 		
-		Mouse m = new Mouse();
-		addMouseListener(m);
-		addMouseMotionListener(m);
-		addMouseWheelListener(m);
+		mouse = new Mouse(this);
+		addMouseListener(mouse);
+		addMouseMotionListener(mouse);
+		addMouseWheelListener(mouse);
+		
+		renderThread t = new renderThread(this);
+		t.start();
 	}
 
 	public void setDiag(Diagram d) 
@@ -42,14 +45,6 @@ public class Pan extends JPanel
 	    title = new Block("Folder: " + d.Folder + "\nClass Count: " + d.JavaBlocks.size(), 50, 0, new Color(193, 255, 194), font);
 		diag = d;
 	}
-
-	public Pan(int x, int y) {
-		this.x = x;
-		this.y = y;
-		setBackground(Color.BLACK);
-		setPreferredSize(new Dimension(x, y));
-	}
-
 	int t = 0;
 
 	public void paintComponent(Graphics page) 
@@ -70,25 +65,25 @@ public class Pan extends JPanel
 		g.fillRect(0, 0, x + 100, y + 100);
 		
 		float prezoom = zoom;
-		zoom = (float)Math.pow(1.05f, Mouse.me.wheel);
+		zoom = (float)Math.pow(1.05f, mouse.wheel);
 		
-		if(Mouse.me.Mpress)
+		if(mouse.Mpress)
 		{
-			Mouse.me.wheel = 0;
+			mouse.wheel = 0;
 			zoom = 1.0f;
 		}
 		
-		zoomx -= (Mouse.me.x/zoom - Mouse.me.x/prezoom);
-		zoomy -= (Mouse.me.y/zoom - Mouse.me.y/prezoom);
+		zoomx -= (mouse.x/zoom - mouse.x/prezoom);
+		zoomy -= (mouse.y/zoom - mouse.y/prezoom);
 		
 		
-		if(Mouse.me.Lpress)
+		if(mouse.Lpress)
 		{
-			zoomx += (startX - Mouse.me.x)/zoom;
-			zoomy += (startY - Mouse.me.y)/zoom;
+			zoomx += (startX - mouse.x)/zoom;
+			zoomy += (startY - mouse.y)/zoom;
 			
-			startX = Mouse.me.x;
-			startY = Mouse.me.y;
+			startX = mouse.x;
+			startY = mouse.y;
 		}
 		
 		//if(img != null) g.drawImage(img, (int)(zoomx*zoom), (int)(zoomy*zoom), (int)(img.getWidth()*zoom), (int)(img.getHeight()*zoom), null);
@@ -259,7 +254,7 @@ public class Pan extends JPanel
 	
 	public void click(int x, int y)
 	{
-		if(Mouse.me.Lpress)
+		if(mouse.Lpress)
 		{
 			startX = x;
 			startY = y;
@@ -269,3 +264,31 @@ public class Pan extends JPanel
 }
 
 
+
+
+class renderThread extends Thread 
+{
+	Pan currentPan;
+
+	public renderThread(Pan p) 
+	{
+		currentPan = p;
+	}
+
+	public void run() 
+	{
+		while (true) 
+		{
+			try 
+			{
+				currentPan.repaint();
+				Thread.sleep(10);
+			} 
+			catch (Exception e) 
+			{
+				break;
+			}
+
+		}
+	}
+}

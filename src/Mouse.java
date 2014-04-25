@@ -3,7 +3,6 @@ import java.awt.event.*;
 
 public class Mouse implements MouseListener , MouseMotionListener , MouseWheelListener
 {
-	public static Mouse me;
 	public int x = 0;
 	public int y = 0;
 	public boolean Lpress = false;
@@ -11,10 +10,11 @@ public class Mouse implements MouseListener , MouseMotionListener , MouseWheelLi
 	public boolean Mpress = false;
 	public boolean hover = true;
 	public int wheel = 0;
+	private Pan owner;
 
-	public Mouse()
+	public Mouse(Pan p)
 	{
-		me = this;
+		owner = p;
 	}
 
 	
@@ -32,7 +32,7 @@ public class Mouse implements MouseListener , MouseMotionListener , MouseWheelLi
 			Rpress = true;
 		
 		
-		Pan.me.click(x, y);
+		owner.click(x, y);
 	}
 
 	public void mouseReleased(MouseEvent e) {
