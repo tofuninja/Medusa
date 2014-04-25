@@ -9,7 +9,7 @@ public class UrlResolver {
 	private String type;
 	private String filename;
 
-	public void resolve () {
+	public String resolve () {
 		String command;
 		switch (type) {
 			case "github":
@@ -48,9 +48,10 @@ public class UrlResolver {
 	}
 
 	public UrlResolver(String p_url) {
-		if (p_url.length > 3)
-			String last3 = p_url.substring(p_url.length-3);
-		if (last3.equals("zip"))
+		String last3 = null;
+		if (p_url.length() > 3)
+			last3 = p_url.substring(p_url.length()-3);
+		if (last3 != null && last3.equals("zip"))
 			type = "zipfile";
 		if ( p_url.contains("://github.com") || p_url.contains("://www.github.com") )
 			type = "github"; 
