@@ -136,15 +136,9 @@ public class Pan extends JPanel
 			
 		}
 		
-
-		g.setColor(backgroundColor);
-		g.fillRect(0, y-15, 120, 15);
-		g.setFont(font2);
-		g.setColor(Color.black);
-		g.drawString("Zoom:"+zoom + "Zoomx:" + zoomx + "Zoomy:" + zoomy, 0, y);
-		
 		
 	}
+	
 	
 	
 	public BufferedImage renderToImage()
