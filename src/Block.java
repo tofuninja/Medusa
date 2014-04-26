@@ -4,8 +4,8 @@ import java.awt.image.BufferedImage;
 class Block 
 {
 	public String text;
-	public float x;
-	public float y;
+	public double x;
+	public double y;
 	public Color color;
 	public Font font;
 	public int width;
