@@ -1,8 +1,15 @@
 import java.awt.*;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
+import javax.swing.TransferHandler;
 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 
 /// Will be the basic render, will prob replace later down the road. 
@@ -34,6 +41,11 @@ public class Pan extends JPanel
 		addMouseListener(mouse);
 		addMouseMotionListener(mouse);
 		addMouseWheelListener(mouse);
+		
+		
+		
+		this.setDropTarget(new dragCatcher());
+		
 		
 		
 		mouse.wheel = -20;
@@ -222,4 +234,14 @@ class renderThread extends Thread
 
 		}
 	}
+}
+
+
+class dragCatcher extends DropTarget
+{
+	@Override
+    public synchronized void drop(DropTargetDropEvent dtde) {
+        System.out.println(dtde.toString());
+        super.drop(dtde);
+    }
 }
