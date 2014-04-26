@@ -74,17 +74,17 @@ class Diagram {
 		public void run() 
 		{
 			// arranging blocks, could take a while
-			for(int i = 0; i < 50000; i++)
+			for(int i = 0; i < 100000; i++)
 			{
-				
+				/*
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				}*/
 				
-				
+				//push from nodes
 				for(int j = 0; j < JavaBlocks.size(); j++)
 				{
 					DiagramBlock db = JavaBlocks.get(j);
@@ -96,7 +96,7 @@ class Diagram {
 						dist = Math.sqrt(dist) + 0.01f;
 						double normx = (db.block.x-db2.block.x)/dist;
 						double normy = (db.block.y-db2.block.y)/dist;
-						double force = -(100.0 + 10*(db.block.width + db2.block.width))/(dist*dist);
+						double force = -(100.0 + 15*(db.block.width + db2.block.width))/(dist*dist);
 						
 						db2.accelx += (normx*force);
 						db2.accely += (normy*force);
@@ -106,6 +106,7 @@ class Diagram {
 					}
 				}
 				
+				//pull to connected nodes
 				for(int j = 0; j < JavaBlocks.size(); j++)
 				{
 					DiagramBlock db = JavaBlocks.get(j);
@@ -119,7 +120,7 @@ class Diagram {
 						dist = Math.sqrt(dist) + 0.0001f;
 						double normx = (db.block.x-db2.block.x)/dist;
 						double normy = (db.block.y-db2.block.y)/dist;
-						double force = 0.000001*(dist*dist)/(refMod);
+						double force = 0.00000003*Math.pow(dist, 2.5)/(refMod);
 						db2.accelx += (normx*force);
 						db2.accely += (normy*force);
 						db.accelx -= (normx*force);
@@ -127,18 +128,18 @@ class Diagram {
 					}
 				}
 				
-				
+				//pull to center of screen
 				for(int j = 0; j < JavaBlocks.size(); j++)
 				{
 					DiagramBlock db = JavaBlocks.get(j);
 					int refCount = db.Class.referenceClasses.size()+1;
-					double refMod = Math.pow(refCount, 2);
+					double refMod = Math.pow(refCount, 2.3);
 					
 					double dist = (db.block.x)*(db.block.x) + (db.block.y)*(db.block.y);
 					dist = Math.sqrt(dist) + 0.0001f;
 					double normx = (db.block.x)/dist;
 					double normy = (db.block.y)/dist;
-					double force = 0.0000001*(dist*dist)/(refMod);
+					double force = 0.00000008*(dist*dist)/(refMod);
 					db.accelx -= (normx*force);
 					db.accely -= (normy*force);
 					
@@ -150,8 +151,8 @@ class Diagram {
 				for(int j = 0; j < JavaBlocks.size(); j++)
 				{
 					DiagramBlock db = JavaBlocks.get(j);
-					db.accelx *= 0.99f;
-					db.accely *= 0.99f;
+					db.accelx *= 0.95f;
+					db.accely *= 0.95f;
 					
 					db.block.x += db.accelx;
 					db.block.y += db.accely;

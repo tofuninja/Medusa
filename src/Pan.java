@@ -35,6 +35,10 @@ public class Pan extends JPanel
 		addMouseMotionListener(mouse);
 		addMouseWheelListener(mouse);
 		
+		
+		mouse.wheel = -20;
+		zoom = (float)Math.pow(1.05f, mouse.wheel);
+		
 		renderThread t = new renderThread(this);
 		t.start();
 	}
