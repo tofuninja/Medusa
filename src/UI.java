@@ -110,6 +110,7 @@ public class UI extends JPanel implements ActionListener
 			diagCount ++;
 			tabFrame tf = new tabFrame();
 			tabbedPane.addTab("diag"+diagCount, tf);
+			tabbedPane.setSelectedComponent(tf);
 		}
 		else if (e.getSource() == openLocal) 
 		{
