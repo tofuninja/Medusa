@@ -55,7 +55,7 @@ public class tabFrame extends JPanel
 		
 		JTree tree = new JTree(top);
 		JScrollPane treeView = new JScrollPane(tree);
-		
+		createNodes(top, class_list);
 		pane.setLeftComponent(treeView);
 		pane.setRightComponent(p);
 		pane.setDividerLocation(150);
@@ -65,6 +65,29 @@ public class tabFrame extends JPanel
 	}
 
 	
+	private void createNodes(DefaultMutableTreeNode top,ArrayList<JavaClass> class_list) {
+		DefaultMutableTreeNode jClass = null;
+		DefaultMutableTreeNode jMethod= null;
+		DefaultMutableTreeNode jVar= null;
+		for (int i = 0; i < class_list.size(); i++ ){
+			try{
+			jClass = new DefaultMutableTreeNode(class_list.get(i).className);
+			top.add(jClass);
+			for (int j = 0; j < class_list.get(i).methodNames.size(); j++)
+			{
+				jMethod = new DefaultMutableTreeNode(class_list.get(i).methodNames.get(j));
+				jClass.add(jMethod);
+				jVar = new DefaultMutableTreeNode(class_list.get(i).variableNames.get(j));
+				jClass.add(jVar);
+			}		
+			   }
+			catch(Exception e2){
+				continue;
+			}
+		}
+
+	
+	}
 }
 
 
