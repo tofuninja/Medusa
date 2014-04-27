@@ -9,8 +9,37 @@ public class UrlResolver {
 	private String url;
 	private String type;
 	private String filename;
+	
+	
+	public UrlResolver(String p_url) {
+		String last3 = null;
+		if (p_url.length() > 3) 
+			last3 = p_url.substring(p_url.length()-3);
 
-	public String resolve () {
+		type = "couldNotResolve";
+
+		File f = new File(p_url);
+		if (f.exists()) {
+			type = (last3 != null && last3.equals("zip")) ? "localZip" : "localDir";
+			filename = p_url;
+		}
+		else {
+			if (last3 != null && last3.equals("zip")) {
+				if ( p_url.contains("://") )
+					type = "webzip";
+			}
+			else if ( p_url.contains("://github.com") || p_url.contains("://www.github.com") ) {
+				type = "github";
+			}
+			UUID uniq = UUID.randomUUID();
+      		filename = "Downloads/" + uniq.toString() ;
+      	}
+
+		url = p_url;
+		
+	}
+
+	public  ArrayList<String> resolve () {
 		String command = null;
 		String output = null;
 		switch (type) {
@@ -42,7 +71,7 @@ public class UrlResolver {
 			default:
 				break;
 		}
-		return filename;
+		return DirCrawler.getFlatJavaFilesList(filename);
 	}
 
 	private static String executeCommand(String command) {
@@ -62,33 +91,7 @@ public class UrlResolver {
 		return output.toString();
 	}
 
-	public UrlResolver(String p_url) {
-		String last3 = null;
-		if (p_url.length() > 3) 
-			last3 = p_url.substring(p_url.length()-3);
 
-		type = "couldNotResolve";
-
-		File f = new File(p_url);
-		if (f.exists()) {
-			type = (last3 != null && last3.equals("zip")) ? "localZip" : "localDir";
-			filename = p_url;
-		}
-		else {
-			if (last3 != null && last3.equals("zip")) {
-				if ( p_url.contains("://") )
-					type = "webzip";
-			}
-			else if ( p_url.contains("://github.com") || p_url.contains("://www.github.com") ) {
-				type = "github";
-			}
-			UUID uniq = UUID.randomUUID();
-      		filename = "Downloads/" + uniq.toString() ;
-      	}
-
-		url = p_url;
-		
-	}
 
 	public void saveUrl(final String urlString)
       throws MalformedURLException, IOException {

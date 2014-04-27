@@ -20,10 +20,12 @@ public class UI extends JPanel implements ActionListener
 	JFileChooser fc;
 	String m_folder_path = "";
 	//JScrollPane sp;
-	JMenuBar mb;
+	JMenuBar menuBar;
 	JMenu menu;
-	JMenuItem mi;
+	JMenu subMenu;
 	JMenuItem save;
+	JMenuItem openLocal;
+	JMenuItem openOnline;
 	JTabbedPane tabbedPane;
 	
 	public UI() 
@@ -38,26 +40,36 @@ public class UI extends JPanel implements ActionListener
 
 	public JMenuBar menu() 
 	{
-		mb = new JMenuBar();
+		menuBar = new JMenuBar();
+		
+		
 		menu = new JMenu("File");
-		mb.add(menu);
-		mi = new JMenuItem("Open");
-
-		save = new JMenuItem("save");
-		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
-		mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		menuBar.add(menu);
+		
+		save = new JMenuItem("Save");
+		subMenu = new JMenu("Open");
 		menu.add(save);
-		menu.add(mi);
+		menu.add(subMenu);
+		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
 		save.addActionListener(this);
-		mi.addActionListener(this);
-		return mb;
+		
+		openLocal = new JMenuItem("Open Local Resource");
+		openOnline = new JMenuItem("Open Online Resource");
+		subMenu.add(openLocal);
+		subMenu.add(openOnline);
+		openLocal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		openOnline.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		openLocal.addActionListener(this);
+		openOnline.addActionListener(this);
+		
+		return menuBar;
 	}
 
 	
 	/// Actions listener for the file dialog 
 	public void actionPerformed(ActionEvent e) 
 	{
-		if (e.getSource() == mi) 
+		if (e.getSource() == openLocal) 
 		{
 			JFileChooser fc = new JFileChooser();
 			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -73,7 +85,7 @@ public class UI extends JPanel implements ActionListener
 			} 
 			else 
 			{
-				// Did not open a file
+				// Did not openLocal a file
 				// Return and do nothing
 				return;
 			}
@@ -85,6 +97,10 @@ public class UI extends JPanel implements ActionListener
 		else if (e.getSource() == save) 
 		{
 			SaveImage();
+			
+		}
+		else if (e.getSource() == openOnline)
+		{
 			
 		}
 	}
