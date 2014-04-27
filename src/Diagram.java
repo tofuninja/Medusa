@@ -76,7 +76,7 @@ class Diagram
 		{
 			JavaClass jc = class_list.get(i);
 			
-			// Find all connections
+			// Find all connections between current classes
 			for(int j = 0; j < class_list.size(); j++ ) 
 			{
 				for(int k = 0; k < jc.referenceNames.size(); k++)
@@ -88,7 +88,27 @@ class Diagram
 				}	
 			}
 			
-			//System.out.println(jc.referenceClasses.size());
+			// Find all connections between classes already added
+			for(DiagramBlock db: JavaBlocks)
+			{
+				// if jc ref db
+				for(String ref: jc.referenceNames)
+				{
+					if(ref.equals(db.Class.className))
+					{
+						jc.referenceClasses.add(db.Class);
+					}
+				}
+				
+				// if db ref jc
+				for(String ref: db.Class.referenceNames)
+				{
+					if(ref.equals(jc.className))
+					{
+						db.Class.referenceClasses.add(jc);
+					}
+				}
+			}
 			
 			
 			DiagramBlock b = new DiagramBlock(jc, x + 50 + 50*(i%5), y + 100 + (i/5)*50);
