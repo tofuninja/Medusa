@@ -23,14 +23,13 @@ public class UrlResolver {
 			type = (last3 != null && last3.equals("zip")) ? "localZip" : "localDir";
 			filename = p_url;
 		}
-		else {
-			if (last3 != null && last3.equals("zip")) {
-				if ( p_url.contains("://") )
-					type = "webzip";
-			}
-			else if ( p_url.contains("://github.com") || p_url.contains("://www.github.com") ) {
-				type = "github";
-			}
+		else if (last3 != null && last3.equals("zip")) {
+			//if ( p_url.contains("://") )
+			type = "webzip";
+			
+			//else if ( p_url.contains("://github.com") || p_url.contains("://www.github.com") ) {
+			//	type = "github";
+			//}
 			UUID uniq = UUID.randomUUID();
       		filename = "Downloads/" + uniq.toString() ;
       	}
@@ -43,10 +42,10 @@ public class UrlResolver {
 		String command = null;
 		String output = null;
 		switch (type) {
-			case "github":
-				command = "git clone "+url+" "+filename ;
-		 		output = executeCommand(command);
-				break;
+			//case "github":
+			//	command = "git clone "+url+" "+filename ;
+		 	//	output = executeCommand(command);
+			//	break;
 			case "webzip":
 				try {
 					saveUrl(url);
@@ -56,7 +55,7 @@ public class UrlResolver {
 				}
 				Unzip uz = new Unzip(filename+".zip", filename);
 				uz.unZipIt();
-				output = executeCommand ("rm "+filename+".zip") ;
+				//output = executeCommand ("rm "+filename+".zip") ;
 				break;
 			case "localZip":
 				String localDir = "Downloads/"+UUID.randomUUID().toString() ;
@@ -66,15 +65,15 @@ public class UrlResolver {
 				break;
 			case "couldNotResolve":
 				filename = "couldNotResolve";
-				break;
+				return new ArrayList<String>();
 			case "localDir":
 			default:
-				break;
+				return null;
 		}
 		return DirCrawler.getFlatJavaFilesList(filename);
 	}
 
-	private static String executeCommand(String command) {
+/*	private static String executeCommand(String command) {
 		StringBuffer output = new StringBuffer();
 		Process p;
 		try {
@@ -89,7 +88,7 @@ public class UrlResolver {
 			e.printStackTrace();
 		}
 		return output.toString();
-	}
+	}*/
 
 
 

@@ -8,6 +8,7 @@ class DiagramBlock {
 	public double accelx = 0.0f;
 	public double accely = 0.0f;
 	
+	
 	public DiagramBlock(JavaClass c, int x, int y) 
 	{	
 		Class = c;

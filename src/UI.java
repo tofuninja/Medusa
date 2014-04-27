@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.TextField;
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -17,6 +18,7 @@ public class UI extends JPanel implements ActionListener
 	static JFrame frame;
 	//static private final String newline = "\n";
 	//JTextArea adr;
+	UrlResolver urlResolver;
 	JFileChooser fc;
 	String m_folder_path = "";
 	//JScrollPane sp;
@@ -28,8 +30,10 @@ public class UI extends JPanel implements ActionListener
 	JMenuItem openOnline;
 	JTabbedPane tabbedPane;
 	
+	
 	public UI() 
 	{
+
 		setPreferredSize(new Dimension(500, 500));
 		BorderLayout bl = new BorderLayout();
 		this.setLayout(bl);
@@ -72,7 +76,7 @@ public class UI extends JPanel implements ActionListener
 		if (e.getSource() == openLocal) 
 		{
 			JFileChooser fc = new JFileChooser();
-			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			int returnVal = fc.showOpenDialog(this);
 			
 			String m_folder_path;
@@ -101,7 +105,32 @@ public class UI extends JPanel implements ActionListener
 		}
 		else if (e.getSource() == openOnline)
 		{
+			JFrame JF = new JFrame();
+			JF.setLayout(new BorderLayout(10,10));
+			JF.setTitle("Open Online Resource");
+			JF.setResizable(false);
 			
+			JLabel lable = new JLabel();
+			lable.setText("Paste link of Online zip file in the box");
+			JF.add(lable,BorderLayout.NORTH);
+			
+			JTextField textField = new JTextField();
+			textField.setColumns(30);
+			JF.add(textField, BorderLayout.WEST);
+			
+			JButton jb = new JButton();
+			jb.setText("Ok");
+			JF.add(jb, BorderLayout.CENTER);
+			
+			JButton jb2 = new JButton();
+			jb2.setText("Cancel");
+			JF.add(jb2, BorderLayout.EAST);
+			
+			JF.pack();
+			JF.setVisible(true);
+			
+			
+			//textField.addActionListener(this);
 		}
 	}
 	
