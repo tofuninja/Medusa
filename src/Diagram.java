@@ -179,12 +179,14 @@ class Diagram
 				
 				if(!shouldRun) return;
 				
-				
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if(JavaBlocks.size() < 50)
+				{
+					try {
+						Thread.sleep(1);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				
 				//push from nodes
@@ -252,8 +254,8 @@ class Diagram
 				for(int j = 0; j < JavaBlocks.size(); j++)
 				{
 					DiagramBlock db = JavaBlocks.get(j);
-					db.accelx *= 0.95f;
-					db.accely *= 0.95f;
+					db.accelx *= 0.9f;
+					db.accely *= 0.9f;
 					
 					db.block.x += db.accelx;
 					db.block.y += db.accely;
