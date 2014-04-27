@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.event.*;
 
 import javax.swing.*;
-import javax.xml.ws.WebFault;
 import javax.imageio.*;
 
 @SuppressWarnings("serial")
