@@ -68,13 +68,34 @@ class Diagram {
 	}
 	
 	
+	public void addFile(String url)
+	{
+		/*
+		 * 
+		 * Change to use the url resolver
+		 * 
+		 */
+	}
+	
+	
 	class physThread extends Thread
 	{
+		int runTime;
+		
+		public physThread()
+		{
+			runTime = 100000;
+		}
+		
+		public physThread(int time)
+		{
+			runTime = time;
+		}
 		
 		public void run() 
 		{
 			// arranging blocks, could take a while
-			for(int i = 0; i < 100000; i++)
+			for(int i = 0; i < runTime; i++)
 			{
 				/*
 				try {

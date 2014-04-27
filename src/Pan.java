@@ -6,11 +6,15 @@ import javax.swing.TransferHandler;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /// Will be the basic render, will prob replace later down the road. 
 public class Pan extends JPanel 
@@ -24,7 +28,7 @@ public class Pan extends JPanel
 	private float zoomy = 0.0f;
 	private float zoom = 1.0f;
 	private Graphics g;
-	private Diagram diag;
+	public Diagram diag;
 
 	
 	int startX = 0;
@@ -44,7 +48,7 @@ public class Pan extends JPanel
 		
 		
 		
-		this.setDropTarget(new dragCatcher());
+		this.setDropTarget(new dragCatcher(this));
 		
 		
 		
@@ -239,9 +243,53 @@ class renderThread extends Thread
 
 class dragCatcher extends DropTarget
 {
+	
+	Pan currentPan;
+
+	public dragCatcher(Pan p) 
+	{
+		currentPan = p;
+	}
+	
 	@Override
-    public synchronized void drop(DropTargetDropEvent dtde) {
-        System.out.println(dtde.toString());
-        super.drop(dtde);
+    public synchronized void drop(DropTargetDropEvent dtde) 
+	{
+		dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+		Transferable t = dtde.getTransferable();
+		
+		if(t.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+		{
+	        try 
+	        {
+	        	java.util.List<File> fileList = (java.util.List<File>)t.getTransferData(DataFlavor.javaFileListFlavor);
+	        	
+	        	for(File f : fileList)
+	        	{
+	        		currentPan.diag.addFile(f.getAbsolutePath());
+	        	}
+	        	
+				
+			} 
+	        catch (Exception e) 
+	        {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else if(t.isDataFlavorSupported(DataFlavor.stringFlavor))
+		{
+	        try 
+	        {
+	        	String s = (String)t.getTransferData(DataFlavor.stringFlavor);
+	        	System.out.println(s);
+			} 
+	        catch (Exception e) 
+	        {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+        
+        //super.drop(dtde);
     }
 }
