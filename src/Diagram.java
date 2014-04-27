@@ -1,6 +1,10 @@
 import java.awt.Color;
 import java.util.*;
 
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+
 class DiagramBlock {
 	JavaClass Class;
 	public Block block;
@@ -32,25 +36,54 @@ class DiagramBlock {
 	} 
 }
 
-class Diagram {
+class Diagram 
+{
 	public ArrayList<DiagramBlock> JavaBlocks = new ArrayList<DiagramBlock>();
-	public String Folder;
+	private physThread phys = null;
+	JTree node;
 	
-	public Diagram(ArrayList<JavaClass> JavaClasses, String folder) 
+	public Diagram(JTree top) 
 	{
-		Folder = folder;
-		for(int i = 0; i < JavaClasses.size(); i++ ) 
+		node = top;
+	}
+	
+	
+	public void addFiles(List<String> files, int x, int y)
+	{
+		
+		ArrayList<JavaClass> class_list = new ArrayList<JavaClass>();
+
+		for (int i = 0; i < files.size(); i++) 
 		{
-			JavaClass jc = JavaClasses.get(i);
+			ArrayList<JavaClass> classes;
+			try 
+			{
+				classes = FileDetails.getClasses(files.get(i));
+			} 
+			catch (Exception e1) 
+			{
+				continue;// error in file
+			}
+
+			for (int j = 0; j < classes.size(); j++) 
+			{
+				class_list.add(classes.get(j));
+			}
+		}
+		
+		
+		for(int i = 0; i < class_list.size(); i++ ) 
+		{
+			JavaClass jc = class_list.get(i);
 			
 			// Find all connections
-			for(int j = 0; j < JavaClasses.size(); j++ ) 
+			for(int j = 0; j < class_list.size(); j++ ) 
 			{
 				for(int k = 0; k < jc.referenceNames.size(); k++)
 				{
-					if(jc.referenceNames.get(k).equals(JavaClasses.get(j).className))
+					if(jc.referenceNames.get(k).equals(class_list.get(j).className))
 					{
-						jc.referenceClasses.add(JavaClasses.get(j));
+						jc.referenceClasses.add(class_list.get(j));
 					}
 				}	
 			}
@@ -58,53 +91,81 @@ class Diagram {
 			//System.out.println(jc.referenceClasses.size());
 			
 			
-			DiagramBlock b = new DiagramBlock(jc, 50 + 50*(i%5), 100 + (i/5)*50);
+			DiagramBlock b = new DiagramBlock(jc, x + 50 + 50*(i%5), y + 100 + (i/5)*50);
 			JavaBlocks.add(b);
 		}
-		
-		
-		physThread pt = new physThread();
-		pt.start();
-		
+		createNodes(class_list);
+		runPhys(100000);
 	}
 	
 	
-	public void addFile(String url)
+	private void createNodes(ArrayList<JavaClass> class_list) 
 	{
-		/*
-		 * 
-		 * Change to use the url resolver
-		 * 
-		 */
+		DefaultTreeModel model = (DefaultTreeModel)node.getModel();
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
+		
+		for (int i = 0; i < class_list.size(); i++ )
+		{
+			DefaultMutableTreeNode jClass = new DefaultMutableTreeNode(new nodeType(class_list.get(i).className, "c"));
+			root.add(jClass);
+			
+			for (int j = 0; j < class_list.get(i).methodNames.size(); j++)
+			{
+				DefaultMutableTreeNode jMethod = new DefaultMutableTreeNode(new nodeType(class_list.get(i).methodNames.get(j),"m"));
+				jClass.add(jMethod);
+			}
+			
+			for (int j = 0; j < class_list.get(i).variableNames.size(); j++)
+			{
+				DefaultMutableTreeNode jVar = new DefaultMutableTreeNode(new nodeType(class_list.get(i).variableNames.get(j), "v"));
+				jClass.add(jVar);
+			}	
+		}
+		
+		model.reload();
+	}
+	
+	
+	private void runPhys(int time)
+	{
+		
+		if(phys != null && phys.isAlive())
+		{
+			phys.shouldRun = false;
+			try {
+				phys.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+			
+		phys = new physThread();
+		phys.runTime = time;
+		phys.start();
 	}
 	
 	
 	class physThread extends Thread
 	{
-		int runTime;
-		
-		public physThread()
-		{
-			runTime = 100000;
-		}
-		
-		public physThread(int time)
-		{
-			runTime = time;
-		}
+		public int runTime = 0;
+		public boolean shouldRun = true;
 		
 		public void run() 
 		{
 			// arranging blocks, could take a while
 			for(int i = 0; i < runTime; i++)
 			{
-				/*
+				
+				if(!shouldRun) return;
+				
+				
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}*/
+				}
 				
 				//push from nodes
 				for(int j = 0; j < JavaBlocks.size(); j++)
@@ -122,8 +183,6 @@ class Diagram {
 						
 						db2.accelx += (normx*force);
 						db2.accely += (normy*force);
-						
-						
 						
 					}
 				}

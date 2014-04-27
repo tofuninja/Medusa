@@ -1,22 +1,19 @@
 import java.awt.*;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
-import javax.swing.TransferHandler;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+
 
 /// Will be the basic render, will prob replace later down the road. 
+@SuppressWarnings("serial")
 public class Pan extends JPanel 
 {
 	public int x = 1000, y = 900;
@@ -46,11 +43,7 @@ public class Pan extends JPanel
 		addMouseMotionListener(mouse);
 		addMouseWheelListener(mouse);
 		
-		
-		
 		this.setDropTarget(new dragCatcher(this));
-		
-		
 		
 		mouse.wheel = -20;
 		zoom = (float)Math.pow(1.05f, mouse.wheel);
@@ -74,8 +67,8 @@ public class Pan extends JPanel
 		super.paintComponents(page);
 		g = page;
 
-		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		//((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		//((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON); //  Was causing problems
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
 		float prezoom = zoom;
@@ -241,6 +234,7 @@ class renderThread extends Thread
 }
 
 
+@SuppressWarnings("serial")
 class dragCatcher extends DropTarget
 {
 	
@@ -261,14 +255,16 @@ class dragCatcher extends DropTarget
 		{
 	        try 
 	        {
-	        	java.util.List<File> fileList = (java.util.List<File>)t.getTransferData(DataFlavor.javaFileListFlavor);
+	        	@SuppressWarnings("unchecked")
+				java.util.List<File> fileList = (java.util.List<File>)t.getTransferData(DataFlavor.javaFileListFlavor);
 	        	
 	        	for(File f : fileList)
 	        	{
-	        		currentPan.diag.addFile(f.getAbsolutePath());
+	        		UrlResolver resolv = new UrlResolver(f.getAbsolutePath());
+	    			ArrayList<String> arr = resolv.resolve();
+	    			if(arr == null) return;
+	    			currentPan.diag.addFiles(arr, 0, 0);
 	        	}
-	        	
-				
 			} 
 	        catch (Exception e) 
 	        {
@@ -281,7 +277,10 @@ class dragCatcher extends DropTarget
 	        try 
 	        {
 	        	String s = (String)t.getTransferData(DataFlavor.stringFlavor);
-	        	System.out.println(s);
+	        	UrlResolver resolv = new UrlResolver(s);
+    			ArrayList<String> arr = resolv.resolve();
+    			if(arr == null) return;
+    			currentPan.diag.addFiles(arr, 0, 0);
 			} 
 	        catch (Exception e) 
 	        {

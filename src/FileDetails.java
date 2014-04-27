@@ -1,14 +1,11 @@
 import japa.parser.*;
 import japa.parser.ast.*;
 import japa.parser.ast.body.*;
-import japa.parser.ast.expr.ClassExpr;
 import japa.parser.ast.type.*;
 import japa.parser.ast.visitor.*;
 
 import java.io.*;
 import java.util.*;
-
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 public class FileDetails {
 

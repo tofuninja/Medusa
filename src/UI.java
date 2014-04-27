@@ -1,20 +1,18 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.TextField;
 import java.awt.event.*;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.xml.ws.WebFault;
 import javax.imageio.*;
 
+@SuppressWarnings("serial")
 public class UI extends JPanel implements ActionListener 
 {
+	public static UI me;
+	
 	static JFrame frame;
 	//static private final String newline = "\n";
 	//JTextArea adr;
@@ -24,21 +22,59 @@ public class UI extends JPanel implements ActionListener
 	//JScrollPane sp;
 	JMenuBar menuBar;
 	JMenu menu;
-	JMenu subMenu;
 	JMenuItem save;
+	JMenuItem newMenuItem;
 	JMenuItem openLocal;
 	JMenuItem openOnline;
 	JTabbedPane tabbedPane;
 	
+	JButton webOk;
+	JButton webCancel;
+	JTextField webText;
+	JFrame webOpenFrame;
+	
+	int diagCount = 0;
+	
 	
 	public UI() 
 	{
-
+		me = this;
 		setPreferredSize(new Dimension(500, 500));
 		BorderLayout bl = new BorderLayout();
 		this.setLayout(bl);
 		tabbedPane = new JTabbedPane();
 		this.add(tabbedPane,BorderLayout.CENTER);
+		
+		diagCount ++;
+		tabFrame tf = new tabFrame();
+		tabbedPane.addTab("diag"+diagCount, tf);
+		
+		
+		
+		webOpenFrame = new JFrame();
+		webOpenFrame.setLayout(new BorderLayout(10,10));
+		webOpenFrame.setTitle("Open online zip");
+		webOpenFrame.setResizable(false);
+		
+		JLabel lable = new JLabel();
+		lable.setText("Open online zip file(such as github)");
+		webOpenFrame.add(lable,BorderLayout.NORTH);
+		
+		webText = new JTextField();
+		webText.setColumns(30);
+		webOpenFrame.add(webText, BorderLayout.WEST);
+		
+		webOk = new JButton();
+		webOk.setText("Ok");
+		webOpenFrame.add(webOk, BorderLayout.CENTER);
+		webOk.addActionListener(this);
+		
+		webCancel = new JButton();
+		webCancel.setText("Cancel");
+		webOpenFrame.add(webCancel, BorderLayout.EAST);
+		webCancel.addActionListener(this);
+		
+		webOpenFrame.pack();
 	}
 	
 
@@ -46,25 +82,22 @@ public class UI extends JPanel implements ActionListener
 	{
 		menuBar = new JMenuBar();
 		
-		
 		menu = new JMenu("File");
 		menuBar.add(menu);
-		
+		newMenuItem = new JMenuItem("New");
 		save = new JMenuItem("Save");
-		subMenu = new JMenu("Open");
-		menu.add(save);
-		menu.add(subMenu);
-		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
-		save.addActionListener(this);
+		openLocal = new JMenuItem("Add");
+		openOnline = new JMenuItem("Add web zip");
 		
-		openLocal = new JMenuItem("Open Local Resource");
-		openOnline = new JMenuItem("Open Online Resource");
-		subMenu.add(openLocal);
-		subMenu.add(openOnline);
-		openLocal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
-		openOnline.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,ActionEvent.ALT_MASK));
+		menu.add(openLocal);
+		menu.add(openOnline);
+		menu.add(newMenuItem);
+		menu.add(save);
+		
+		save.addActionListener(this);
 		openLocal.addActionListener(this);
 		openOnline.addActionListener(this);
+		newMenuItem.addActionListener(this);
 		
 		return menuBar;
 	}
@@ -73,7 +106,13 @@ public class UI extends JPanel implements ActionListener
 	/// Actions listener for the file dialog 
 	public void actionPerformed(ActionEvent e) 
 	{
-		if (e.getSource() == openLocal) 
+		if(e.getSource() == newMenuItem)
+		{
+			diagCount ++;
+			tabFrame tf = new tabFrame();
+			tabbedPane.addTab("diag"+diagCount, tf);
+		}
+		else if (e.getSource() == openLocal) 
 		{
 			JFileChooser fc = new JFileChooser();
 			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -94,8 +133,23 @@ public class UI extends JPanel implements ActionListener
 				return;
 			}
 			
-			tabFrame tf = new tabFrame(m_folder_path);
-			tabbedPane.addTab(m_folder_path, tf);
+			UrlResolver resolv = new UrlResolver(m_folder_path);
+			ArrayList<String> arr = resolv.resolve();
+			if(arr == null) 
+			{
+				infoBox("Unable to open file or directory", "Error");
+				return;
+			}
+			
+			tabFrame tb = (tabFrame)tabbedPane.getSelectedComponent();
+			if(tb == null) 
+			{
+				diagCount ++;
+				tabFrame tf = new tabFrame();
+				tabbedPane.addTab("diag"+diagCount, tf);
+				tb = (tabFrame)tabbedPane.getSelectedComponent();
+			}
+			tb.pan.diag.addFiles(arr, 0, 0);
 
 		} 
 		else if (e.getSource() == save) 
@@ -105,31 +159,35 @@ public class UI extends JPanel implements ActionListener
 		}
 		else if (e.getSource() == openOnline)
 		{
-			JFrame JF = new JFrame();
-			JF.setLayout(new BorderLayout(10,10));
-			JF.setTitle("Open Online Resource");
-			JF.setResizable(false);
+			webText.setText("");
+			webOpenFrame.setVisible(true);
+			//textField.addActionListener(this);
+		}
+		else if (e.getSource() == webOk)
+		{
+			UrlResolver resolv = new UrlResolver(webText.getText());
+			webOpenFrame.setVisible(false);
+			ArrayList<String> arr = resolv.resolve();
+			if(arr == null) 
+			{
+				infoBox("Unable to open file or directory", "Error");
+				return;
+			}
 			
-			JLabel lable = new JLabel();
-			lable.setText("Paste link of Online zip file in the box");
-			JF.add(lable,BorderLayout.NORTH);
-			
-			JTextField textField = new JTextField();
-			textField.setColumns(30);
-			JF.add(textField, BorderLayout.WEST);
-			
-			JButton jb = new JButton();
-			jb.setText("Ok");
-			JF.add(jb, BorderLayout.CENTER);
-			
-			JButton jb2 = new JButton();
-			jb2.setText("Cancel");
-			JF.add(jb2, BorderLayout.EAST);
-			
-			JF.pack();
-			JF.setVisible(true);
-			
-			
+			tabFrame tb = (tabFrame)tabbedPane.getSelectedComponent();
+			if(tb == null) 
+			{
+				diagCount ++;
+				tabFrame tf = new tabFrame();
+				tabbedPane.addTab("diag"+diagCount, tf);
+				tb = (tabFrame)tabbedPane.getSelectedComponent();
+			}
+			tb.pan.diag.addFiles(arr, 0, 0);
+			//textField.addActionListener(this);
+		}
+		else if (e.getSource() == webCancel)
+		{
+			webOpenFrame.setVisible(false);
 			//textField.addActionListener(this);
 		}
 	}

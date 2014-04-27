@@ -9,7 +9,7 @@ public class DirCrawler {
 		ArrayList<String> dirStruct = new ArrayList<String>();
 		File folder = new File(path);
 		File[] listOfFiles = folder.listFiles(); 
-		
+		if(listOfFiles == null) return null;
 		for (int i = 0; i < listOfFiles.length; i++) {
 			files = listOfFiles[i].getName();
 			

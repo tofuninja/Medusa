@@ -1,48 +1,30 @@
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Image;
 import java.io.File;
-import java.util.ArrayList;
 
-import javax.swing.JFileChooser;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
 
+@SuppressWarnings("serial")
 public class tabFrame extends JPanel
 {
 	public Pan pan;
-	public tabFrame(String m_folder_path)
+	public tabFrame()
 	{
-
+		// adr.setCaretPosition(adr.getDocument().getLength())
+		DefaultMutableTreeNode top = new DefaultMutableTreeNode(new nodeType("Medusa", "d"));
+		JTree tree = new JTree(top);
 		
-
-		// adr.setCaretPosition(adr.getDocument().getLength());
-
-		ArrayList<String> arr = DirCrawler
-				.getFlatJavaFilesList(m_folder_path);
-		ArrayList<JavaClass> class_list = new ArrayList<JavaClass>();
-
-		for (int i = 0; i < arr.size(); i++) 
-		{
-			ArrayList<JavaClass> classes;
-			try 
-			{
-				classes = FileDetails.getClasses(arr.get(i));
-			} 
-			catch (Exception e1) 
-			{
-				continue;// error in file
-			}
-
-			for (int j = 0; j < classes.size(); j++) 
-			{
-				class_list.add(classes.get(j));
-			}
-		}
-
-		Diagram diag = new Diagram(class_list, m_folder_path);
+		Diagram diag = new Diagram(tree);
+		
 		Pan p = new Pan();
 		p.setDiag(diag);
 		pan = p;
@@ -50,12 +32,8 @@ public class tabFrame extends JPanel
 		JSplitPane pane = new JSplitPane();
 		pane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 		
-		
-		DefaultMutableTreeNode top = new DefaultMutableTreeNode("Medusa");
-		
-		JTree tree = new JTree(top);
+		tree.setCellRenderer(new MyRenderer());
 		JScrollPane treeView = new JScrollPane(tree);
-		createNodes(top, class_list);
 		pane.setLeftComponent(treeView);
 		pane.setRightComponent(p);
 		pane.setDividerLocation(150);
@@ -64,31 +42,81 @@ public class tabFrame extends JPanel
 		
 	}
 
-	
-	private void createNodes(DefaultMutableTreeNode top,ArrayList<JavaClass> class_list) {
-		DefaultMutableTreeNode jClass = null;
-		DefaultMutableTreeNode jMethod= null;
-		DefaultMutableTreeNode jVar= null;
-		for (int i = 0; i < class_list.size(); i++ ){
-			try{
-			jClass = new DefaultMutableTreeNode(class_list.get(i).className);
-			top.add(jClass);
-			for (int j = 0; j < class_list.get(i).methodNames.size(); j++)
-			{
-				jMethod = new DefaultMutableTreeNode(class_list.get(i).methodNames.get(j));
-				jClass.add(jMethod);
-				jVar = new DefaultMutableTreeNode(class_list.get(i).variableNames.get(j));
-				jClass.add(jVar);
-			}		
-			   }
-			catch(Exception e2){
-				continue;
-			}
-		}
-
-	
-	}
 }
 
 
+@SuppressWarnings("serial")
+class MyRenderer extends DefaultTreeCellRenderer 
+{
+	static ImageIcon cIcon;
+	static ImageIcon mIcon;
+	static ImageIcon vIcon;
+	static ImageIcon dIcon;
+	
+	static
+	{
 
+		try {
+			Image cImg = ImageIO.read(new File("res/class.png"));
+			Image mImg = ImageIO.read(new File("res/method.png"));
+			Image vImg = ImageIO.read(new File("res/variable.png"));
+			Image dImg = ImageIO.read(new File("res/diagram.png"));
+			
+			cIcon = new ImageIcon(cImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+			mIcon = new ImageIcon(mImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+			vIcon = new ImageIcon(vImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+			dIcon = new ImageIcon(dImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+	}
+
+    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) 
+    {
+        super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+        DefaultMutableTreeNode node =(DefaultMutableTreeNode)value;
+        nodeType s = (nodeType)node.getUserObject();
+        if (s != null && s.type == "c") 
+        {
+            setIcon(cIcon);
+        } 
+        else if (s != null && s.type == "m") 
+        {
+            setIcon(mIcon);
+        }
+        else if (s != null && s.type == "v") 
+        {
+            setIcon(vIcon);
+        }
+        else if (s != null && s.type == "d") 
+        {
+            setIcon(dIcon);
+        }
+        
+        setToolTipText(null); //no tool tip
+        return this;
+    }
+}
+
+class nodeType
+{
+	public String text;
+	public String type;
+	public nodeType(String txt,String typ) 
+	{
+		text = txt;
+		type = typ;
+	}
+	
+	@Override
+	public String toString() 
+	{
+		return text;
+	}
+}
