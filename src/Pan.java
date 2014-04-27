@@ -21,8 +21,8 @@ public class Pan extends JPanel
 	public static Font font = new Font("Courier New", Font.BOLD, 24);
 	public static Font font2 = new Font("Courier New", Font.PLAIN, 12);
 	
-	private float zoomx = 0.0f;
-	private float zoomy = 0.0f;
+	private float zoomx = -300f;
+	private float zoomy = -300f;
 	private float zoom = 1.0f;
 	private Graphics g;
 	public Diagram diag;
@@ -93,7 +93,19 @@ public class Pan extends JPanel
 			startY = mouse.y;
 		}
 		
-		render(g, zoom, zoomx, zoomy, x, y);
+		if(diag.JavaBlocks.size() != 0)
+		{
+			render(g, zoom, zoomx, zoomy, x, y);
+		}
+		else
+		{
+			g.setColor(backgroundColor);
+			g.fillRect(0, 0, x, y);
+			g.setColor(Color.black);
+			g.setFont(font);
+			g.drawString("add some files", x/2-100, y/2);
+			g.drawString("to get started", x/2-100, y/2+25);
+		}
 		
 	}
 	
