@@ -42,6 +42,8 @@ public class Mouse implements MouseListener , MouseMotionListener , MouseWheelLi
 			Mpress = false;
 		if(e.getButton()==3)
 			Rpress = false;
+		
+		owner.release(x, y);
 
 	}
 

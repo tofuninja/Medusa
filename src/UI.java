@@ -8,7 +8,7 @@ import javax.swing.*;
 import javax.imageio.*;
 
 @SuppressWarnings("serial")
-public class UI extends JPanel implements ActionListener 
+public class UI extends JPanel implements ActionListener
 {
 	public static UI me;
 	
@@ -32,6 +32,7 @@ public class UI extends JPanel implements ActionListener
 	JTextField webText;
 	JFrame webOpenFrame;
 	
+	
 	int diagCount = 0;
 	
 	
@@ -47,8 +48,6 @@ public class UI extends JPanel implements ActionListener
 		diagCount ++;
 		tabFrame tf = new tabFrame();
 		tabbedPane.addTab("diag"+diagCount, tf);
-		
-		
 		
 		webOpenFrame = new JFrame();
 		webOpenFrame.setLayout(new BorderLayout(10,10));
@@ -100,7 +99,6 @@ public class UI extends JPanel implements ActionListener
 		
 		return menuBar;
 	}
-
 	
 	/// Actions listener for the file dialog 
 	public void actionPerformed(ActionEvent e) 

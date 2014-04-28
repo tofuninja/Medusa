@@ -179,6 +179,7 @@ class Diagram
 				
 				if(!shouldRun) return;
 				
+				
 				if(JavaBlocks.size() < 50)
 				{
 					try {

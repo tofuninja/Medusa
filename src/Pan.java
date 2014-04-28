@@ -32,6 +32,10 @@ public class Pan extends JPanel
 	int startY = 0;
 	
 	Mouse mouse;
+	
+	int clickStartX = 0;
+	int clickStartY = 0;
+	int clickTime = -1;
 
 	public Pan() 
 	{
@@ -91,6 +95,8 @@ public class Pan extends JPanel
 			
 			startX = mouse.x;
 			startY = mouse.y;
+			
+			clickTime++;
 		}
 		
 		if(diag.JavaBlocks.size() != 0)
@@ -210,6 +216,44 @@ public class Pan extends JPanel
 		{
 			startX = x;
 			startY = y;
+			
+			clickStartX = x;
+			clickStartY = y;
+			clickTime = 0;
+		}
+	}
+	
+	
+	public void release(int x, int y)
+	{
+		if(clickTime >= 0)
+			leftClick(clickTime, x, y, clickStartX, clickStartY);
+		clickTime = -1;
+	}
+	
+	private void leftClick(int clickDur, int x, int y, int sx, int sy)
+	{
+		double dist = (x-sx)*(x-sx) + (y-sy)*(y-sy);
+		dist = Math.sqrt(dist);
+		if(dist <= 5.0)// we will count this as a click... longer and its prob panning... 
+		{
+			double rx = zoomx + x/zoom;
+			double ry = zoomy + y/zoom;
+			
+			DiagramBlock clickBlock = null;
+			
+			for(DiagramBlock b: diag.JavaBlocks)
+			{
+				if(rx > b.block.x && ry > b.block.y && rx < b.block.x + b.block.width && ry < b.block.y + b.block.height)
+					clickBlock = b;
+			}
+			
+			
+			if(clickBlock != null)
+			{
+				// the block has been clicked... do stuff
+			}
+			
 		}
 	}
 
