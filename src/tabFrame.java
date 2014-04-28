@@ -66,6 +66,8 @@ class MyRenderer extends DefaultTreeCellRenderer
 	static ImageIcon mIcon;
 	static ImageIcon vIcon;
 	static ImageIcon dIcon;
+	static ImageIcon eIcon;
+	static ImageIcon iIcon;
 	
 	static
 	{
@@ -75,11 +77,16 @@ class MyRenderer extends DefaultTreeCellRenderer
 			Image mImg = ImageIO.read(new File("res/method.png"));
 			Image vImg = ImageIO.read(new File("res/variable.png"));
 			Image dImg = ImageIO.read(new File("res/diagram.png"));
+			Image eImg = ImageIO.read(new File("res/extends.png"));
+			Image iImg = ImageIO.read(new File("res/interface.png"));
 			
 			cIcon = new ImageIcon(cImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 			mIcon = new ImageIcon(mImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 			vIcon = new ImageIcon(vImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 			dIcon = new ImageIcon(dImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+			eIcon = new ImageIcon(eImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+			iIcon = new ImageIcon(iImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+			
 		} 
 		catch (Exception e) 
 		{
@@ -111,6 +118,14 @@ class MyRenderer extends DefaultTreeCellRenderer
         else if (s != null && s.type == "d") 
         {
             setIcon(dIcon);
+        }
+        else if (s != null && s.type == "e") 
+        {
+            setIcon(eIcon);
+        }
+        else if (s != null && s.type == "i") 
+        {
+            setIcon(iIcon);
         }
         
         setToolTipText(null); //no tool tip

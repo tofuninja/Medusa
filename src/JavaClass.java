@@ -1,6 +1,8 @@
 import java.util.*;
 
 public class JavaClass {
+	boolean isInterface = false;
+	boolean isAbstract = false;
 	String className;
 	String extendsClass;
 	ArrayList<String> implementsInterfaces;

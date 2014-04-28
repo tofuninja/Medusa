@@ -32,7 +32,15 @@ class DiagramBlock {
 			str += c.variableNames.get(j) + "\n";
 		}
 		*/
-		block = new Block(str, x, y,new Color(196, 121, 126), Pan.font);
+		
+		Color col;
+		
+		if(c.isInterface)
+			col = new Color(214, 162, 88);
+		else
+			col = new Color(196, 121, 126);
+		
+		block = new Block(str, x, y, col, Pan.font);
 		
 	} 
 }
@@ -143,20 +151,40 @@ class Diagram
 		DefaultTreeModel model = (DefaultTreeModel)node.getModel();
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
 		
-		for (int i = 0; i < class_list.size(); i++ )
+		for (JavaClass jc: class_list )
 		{
-			DefaultMutableTreeNode jClass = new DefaultMutableTreeNode(new nodeType(class_list.get(i).className, "c"));
+			DefaultMutableTreeNode jClass;
+			if(jc.isInterface)
+			{
+				jClass = new DefaultMutableTreeNode(new nodeType(jc.className, "i"));
+			}
+			else
+			{
+				jClass = new DefaultMutableTreeNode(new nodeType(jc.className, "c"));
+			}
 			root.add(jClass);
 			
-			for (int j = 0; j < class_list.get(i).methodNames.size(); j++)
+			if(!jc.extendsClass.equals(""))
 			{
-				DefaultMutableTreeNode jMethod = new DefaultMutableTreeNode(new nodeType(class_list.get(i).methodNames.get(j),"m"));
+				DefaultMutableTreeNode jExtends = new DefaultMutableTreeNode(new nodeType(jc.extendsClass,"e"));
+				jClass.add(jExtends);
+			}
+			
+			for(String inter: jc.implementsInterfaces)
+			{
+				DefaultMutableTreeNode jInterface = new DefaultMutableTreeNode(new nodeType(inter,"i"));
+				jClass.add(jInterface);
+			}
+				
+			for (int j = 0; j < jc.methodNames.size(); j++)
+			{
+				DefaultMutableTreeNode jMethod = new DefaultMutableTreeNode(new nodeType(jc.methodNames.get(j),"m"));
 				jClass.add(jMethod);
 			}
 			
-			for (int j = 0; j < class_list.get(i).variableNames.size(); j++)
+			for (int j = 0; j < jc.variableNames.size(); j++)
 			{
-				DefaultMutableTreeNode jVar = new DefaultMutableTreeNode(new nodeType(class_list.get(i).variableNames.get(j), "v"));
+				DefaultMutableTreeNode jVar = new DefaultMutableTreeNode(new nodeType(jc.variableNames.get(j), "v"));
 				jClass.add(jVar);
 			}	
 		}

@@ -65,6 +65,8 @@ public class FileDetails {
         {
         
         	JavaClass jc = new JavaClass();
+        	jc.isInterface = n.isInterface();
+        	
         	
         	jc.className = n.getName();
         	jc.extendsClass = (n.getExtends() != null) ? n.getExtends().get(0).getName() : "";
