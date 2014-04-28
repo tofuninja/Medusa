@@ -118,13 +118,15 @@ public class Pan extends JPanel
 	
 	
 	
-	
+	private static BasicStroke normStroke = new BasicStroke(1);
+	private static BasicStroke thickStroke = new BasicStroke(2);
 	
 	public void render(Graphics g, float zoom_l, float zoomx_l, float zoomy_l, int width, int height)
 	{
 		// Clears the background
 		g.setColor(backgroundColor);
 		g.fillRect(0, 0, width, height);
+		Graphics2D g2d = (Graphics2D)g;
 		
 		if(diag != null)
 		{
@@ -145,12 +147,26 @@ public class Pan extends JPanel
 				// Draw Connection lines 
 				for(int j = 0; j < db.Class.referenceClasses.size();j++)
 				{
-					Block b2 = db.Class.referenceClasses.get(j).diagBlock.block;
+					javaRef ref = db.Class.referenceClasses.get(j);
+					
+					if(!javaRef.enabled[ref.type]) continue;
+					
+					if(ref.thick)
+					{
+						g2d.setStroke(thickStroke);
+					}
+					
+					Block b2 = ref.end.diagBlock.block;
 					int dx2 = (int)(b2.x*zoom_l - zoomx_l*zoom_l) + (int)(b2.width*zoom_l) /2;
 					int dy2 = (int)(b2.y*zoom_l - zoomy_l*zoom_l) + (int)(b2.height*zoom_l) /2;
 					
-					g.setColor(Color.blue);
+					g.setColor(ref.color);
 					g.drawLine(dx, dy, dx2, dy2);
+					
+					if(ref.thick)
+					{
+						g2d.setStroke(normStroke);
+					}
 				}
 				
 			}
@@ -252,7 +268,9 @@ public class Pan extends JPanel
 			
 			if(clickBlock != null)
 			{
-				// the block has been clicked... do stuff
+				System.out.println(clickBlock.Class.className);
+				System.out.println(clickBlock.Class.extendsClass);
+				System.out.println(clickBlock.Class.implementsInterfaces);
 			}
 			
 		}

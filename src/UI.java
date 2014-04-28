@@ -32,6 +32,10 @@ public class UI extends JPanel implements ActionListener
 	JTextField webText;
 	JFrame webOpenFrame;
 	
+	JCheckBoxMenuItem viewRefCheck;
+	JCheckBoxMenuItem viewExtendsCheck;
+	JCheckBoxMenuItem viewImplimentsCheck;
+	
 	
 	int diagCount = 0;
 	
@@ -70,7 +74,8 @@ public class UI extends JPanel implements ActionListener
 		webCancel = new JButton();
 		webCancel.setText("Cancel");
 		webOpenFrame.add(webCancel, BorderLayout.EAST);
-		webCancel.addActionListener(this);
+		webCancel.addActionListener(this);		
+		
 		
 		webOpenFrame.pack();
 	}
@@ -92,10 +97,30 @@ public class UI extends JPanel implements ActionListener
 		menu.add(newMenuItem);
 		menu.add(save);
 		
+		
+		JMenu viewMenu = new JMenu("View");
+		menuBar.add(viewMenu);
+		
+		viewRefCheck = new JCheckBoxMenuItem("View Reference Connections");
+		viewExtendsCheck = new JCheckBoxMenuItem("View Extends Connections");
+		viewImplimentsCheck = new JCheckBoxMenuItem("View Implements Connections");
+		
+		viewRefCheck.setState(true);
+		viewExtendsCheck.setState(true);
+		viewImplimentsCheck.setState(true);
+		
+		viewMenu.add(viewRefCheck);
+		viewMenu.add(viewExtendsCheck);
+		viewMenu.add(viewImplimentsCheck);
+		
+		
 		save.addActionListener(this);
 		openLocal.addActionListener(this);
 		openOnline.addActionListener(this);
 		newMenuItem.addActionListener(this);
+		viewRefCheck.addActionListener(this);
+		viewExtendsCheck.addActionListener(this);
+		viewImplimentsCheck.addActionListener(this);
 		
 		return menuBar;
 	}
@@ -187,6 +212,18 @@ public class UI extends JPanel implements ActionListener
 		{
 			webOpenFrame.setVisible(false);
 			//textField.addActionListener(this);
+		}
+		else if(e.getSource() == viewRefCheck)
+		{
+			javaRef.enabled[0] = viewRefCheck.getState();
+		}
+		else if(e.getSource() == viewExtendsCheck)
+		{
+			javaRef.enabled[1] = viewExtendsCheck.getState();
+		}
+		else if(e.getSource() == viewImplimentsCheck)
+		{
+			javaRef.enabled[2] = viewImplimentsCheck.getState();
 		}
 	}
 	

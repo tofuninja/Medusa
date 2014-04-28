@@ -75,6 +75,8 @@ class Diagram
 		}
 		
 		
+		ArrayList<DiagramBlock> newBlocks = new ArrayList<DiagramBlock>();
+		
 		for(int i = 0; i < class_list.size(); i++ ) 
 		{
 			JavaClass jc = class_list.get(i);
@@ -86,7 +88,7 @@ class Diagram
 				{
 					if(jc.referenceNames.get(k).equals(class_list.get(j).className))
 					{
-						jc.referenceClasses.add(class_list.get(j));
+						jc.referenceClasses.add(new javaRef(jc,class_list.get(j)));
 					}
 				}	
 			}
@@ -99,7 +101,7 @@ class Diagram
 				{
 					if(ref.equals(db.Class.className))
 					{
-						jc.referenceClasses.add(db.Class);
+						jc.referenceClasses.add(new javaRef(jc, db.Class));
 					}
 				}
 				
@@ -108,15 +110,18 @@ class Diagram
 				{
 					if(ref.equals(jc.className))
 					{
-						db.Class.referenceClasses.add(jc);
+						db.Class.referenceClasses.add(new javaRef(db.Class, jc));
 					}
 				}
 			}
 			
 			
 			DiagramBlock b = new DiagramBlock(jc, x + 50 + 50*(i%5), y + 100 + (i/5)*50);
-			JavaBlocks.add(b);
+			newBlocks.add(b);
 		}
+		
+		JavaBlocks.addAll(newBlocks);
+		
 		createNodes(class_list);
 		runPhys(100000);
 	}
@@ -124,7 +129,7 @@ class Diagram
 	
 	public void genStatus()
 	{
-		String status = "Class Count:" + JavaBlocks.size();
+		String status = "Node Count:" + JavaBlocks.size();
 		
 		if(phys != null && phys.runTime > 0)
 			status += "            Phys Time:" + phys.runTime;
@@ -233,7 +238,7 @@ class Diagram
 					double refMod = Math.pow(refCount, 2);
 					for(int k = 0; k < refCount; k++)
 					{
-						DiagramBlock db2 = db.Class.referenceClasses.get(k).diagBlock;
+						DiagramBlock db2 = db.Class.referenceClasses.get(k).end.diagBlock;
 						
 						double dist = (db.block.x-db2.block.x)*(db.block.x-db2.block.x) + (db.block.y-db2.block.y)*(db.block.y-db2.block.y);
 						dist = Math.sqrt(dist) + 0.0001f;

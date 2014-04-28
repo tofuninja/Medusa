@@ -7,7 +7,9 @@ public class JavaClass {
 	ArrayList<String> methodNames;
 	ArrayList<String> variableNames;
 	ArrayList<String> referenceNames;
-	ArrayList<JavaClass> referenceClasses;
+	
+	ArrayList<javaRef> referenceClasses;
+	
 	DiagramBlock diagBlock;
 	
 	public JavaClass() {
@@ -16,7 +18,7 @@ public class JavaClass {
 		implementsInterfaces = new ArrayList<String>();
 		methodNames = new ArrayList<String>();
 		variableNames = new ArrayList<String>();
-		referenceClasses = new ArrayList<JavaClass>();
+		referenceClasses = new ArrayList<javaRef>();
 	}
 	public String toString() {
 		 return "\nClassName: "+className+"\n"
