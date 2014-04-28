@@ -71,6 +71,13 @@ public class FileDetails {
         	jc.className = n.getName();
         	jc.extendsClass = (n.getExtends() != null) ? n.getExtends().get(0).getName() : "";
         	
+        	
+        	if((n.getModifiers() & ModifierSet.ABSTRACT) == ModifierSet.ABSTRACT)
+        	{
+        		jc.isAbstract = true;
+        	}
+        	
+        	
         	referenceVisit rf = new referenceVisit();
         	rf.visit(n, null);
      
@@ -105,7 +112,14 @@ public class FileDetails {
         	    {
         	    	
         	    	japa.parser.ast.body.MethodDeclaration md = (japa.parser.ast.body.MethodDeclaration)item;  
-        	    	String umlstr = md.getType().toString();
+        	    	String umlstr = "";
+        	    	
+        	    	if((md.getModifiers() & ModifierSet.ABSTRACT) == ModifierSet.ABSTRACT)
+                	{
+        	    		umlstr += "abstract ";
+                	}
+        	    	
+        	    	umlstr += md.getType().toString();
         	    	umlstr += " "+md.getName()+"(";  
         	    	
         	    	if(md.getParameters() != null) 

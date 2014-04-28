@@ -37,6 +37,8 @@ class DiagramBlock {
 		
 		if(c.isInterface)
 			col = new Color(214, 162, 88);
+		else if(c.isAbstract)
+			col = new Color(139, 144, 217);
 		else
 			col = new Color(196, 121, 126);
 		
@@ -158,11 +160,16 @@ class Diagram
 			{
 				jClass = new DefaultMutableTreeNode(new nodeType(jc.className, "i"));
 			}
+			else if(jc.isAbstract)
+			{
+				jClass = new DefaultMutableTreeNode(new nodeType(jc.className, "a"));
+			}
 			else
 			{
 				jClass = new DefaultMutableTreeNode(new nodeType(jc.className, "c"));
 			}
 			root.add(jClass);
+			
 			
 			if(!jc.extendsClass.equals(""))
 			{

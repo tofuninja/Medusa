@@ -68,6 +68,7 @@ class MyRenderer extends DefaultTreeCellRenderer
 	static ImageIcon dIcon;
 	static ImageIcon eIcon;
 	static ImageIcon iIcon;
+	static ImageIcon aIcon;
 	
 	static
 	{
@@ -79,6 +80,7 @@ class MyRenderer extends DefaultTreeCellRenderer
 			Image dImg = ImageIO.read(new File("res/diagram.png"));
 			Image eImg = ImageIO.read(new File("res/extends.png"));
 			Image iImg = ImageIO.read(new File("res/interface.png"));
+			Image aImg = ImageIO.read(new File("res/abstract.png"));
 			
 			cIcon = new ImageIcon(cImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 			mIcon = new ImageIcon(mImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
@@ -86,6 +88,7 @@ class MyRenderer extends DefaultTreeCellRenderer
 			dIcon = new ImageIcon(dImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 			eIcon = new ImageIcon(eImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 			iIcon = new ImageIcon(iImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+			aIcon = new ImageIcon(aImg.getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 			
 		} 
 		catch (Exception e) 
@@ -106,29 +109,40 @@ class MyRenderer extends DefaultTreeCellRenderer
         if (s != null && s.type == "c") 
         {
             setIcon(cIcon);
+            setToolTipText("Class"); 
         } 
         else if (s != null && s.type == "m") 
         {
             setIcon(mIcon);
+            setToolTipText("Method"); 
         }
         else if (s != null && s.type == "v") 
         {
             setIcon(vIcon);
+            setToolTipText("Field"); 
         }
         else if (s != null && s.type == "d") 
         {
             setIcon(dIcon);
+            setToolTipText(null); 
         }
         else if (s != null && s.type == "e") 
         {
             setIcon(eIcon);
+            setToolTipText("Extends"); 
         }
         else if (s != null && s.type == "i") 
         {
             setIcon(iIcon);
+            setToolTipText("Interface"); 
+        }
+        else if (s != null && s.type == "a") 
+        {
+            setIcon(aIcon);
+            setToolTipText("Abstract Class"); 
         }
         
-        setToolTipText(null); //no tool tip
+        
         return this;
     }
 }
