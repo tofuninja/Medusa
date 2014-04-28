@@ -6,6 +6,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import java.util.*;
 class DiagramBlock {
 	JavaClass Class;
 	public Block block;
@@ -182,16 +183,20 @@ class Diagram
 				DefaultMutableTreeNode jInterface = new DefaultMutableTreeNode(new nodeType(inter,"i"));
 				jClass.add(jInterface);
 			}
-				
+			
+			ArrayList<String> msorted = jc.methodNames;
+			Collections.sort(msorted);
+			ArrayList<String> vsorted = jc.variableNames;
+			Collections.sort(vsorted);
 			for (int j = 0; j < jc.methodNames.size(); j++)
 			{
-				DefaultMutableTreeNode jMethod = new DefaultMutableTreeNode(new nodeType(jc.methodNames.get(j),"m"));
+				DefaultMutableTreeNode jMethod = new DefaultMutableTreeNode(new nodeType(msorted.get(j),"m"));
 				jClass.add(jMethod);
 			}
 			
 			for (int j = 0; j < jc.variableNames.size(); j++)
 			{
-				DefaultMutableTreeNode jVar = new DefaultMutableTreeNode(new nodeType(jc.variableNames.get(j), "v"));
+				DefaultMutableTreeNode jVar = new DefaultMutableTreeNode(new nodeType(vsorted.get(j), "v"));
 				jClass.add(jVar);
 			}	
 		}
