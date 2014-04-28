@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.util.*;
 
+import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -41,10 +42,12 @@ class Diagram
 	public ArrayList<DiagramBlock> JavaBlocks = new ArrayList<DiagramBlock>();
 	private physThread phys = null;
 	JTree node;
+	JLabel statusLabel;
 	
-	public Diagram(JTree top) 
+	public Diagram(JTree top, JLabel status) 
 	{
 		node = top;
+		statusLabel = status;
 	}
 	
 	
@@ -119,6 +122,17 @@ class Diagram
 	}
 	
 	
+	public void genStatus()
+	{
+		String status = "Class Count:" + JavaBlocks.size();
+		
+		if(phys != null && phys.runTime > 0)
+			status += "            Phys Time:" + phys.runTime;
+		
+		statusLabel.setText(status);
+	}
+	
+	
 	private void createNodes(ArrayList<JavaClass> class_list) 
 	{
 		DefaultTreeModel model = (DefaultTreeModel)node.getModel();
@@ -154,6 +168,7 @@ class Diagram
 			phys.shouldRun = false;
 			try {
 				phys.join();
+				phys.runTime = 0;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -174,13 +189,13 @@ class Diagram
 		public void run() 
 		{
 			// arranging blocks, could take a while
-			for(int i = 0; i < runTime; i++)
+			for(;runTime > 0; runTime--)
 			{
 				
 				if(!shouldRun) return;
 				
 				
-				if(JavaBlocks.size() < 50)
+				if(JavaBlocks.size() < 50 && runTime%5 == 0)
 				{
 					try {
 						Thread.sleep(1);

@@ -1,14 +1,19 @@
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.io.File;
 
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
@@ -22,8 +27,9 @@ public class tabFrame extends JPanel
 		// adr.setCaretPosition(adr.getDocument().getLength())
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode(new nodeType("Medusa", "d"));
 		JTree tree = new JTree(top);
+		JLabel statusLabel = new JLabel("");
 		
-		Diagram diag = new Diagram(tree);
+		Diagram diag = new Diagram(tree, statusLabel);
 		
 		Pan p = new Pan();
 		p.setDiag(diag);
@@ -39,6 +45,14 @@ public class tabFrame extends JPanel
 		pane.setDividerLocation(150);
 		this.setLayout(new BorderLayout());
 		this.add(pane, BorderLayout.CENTER);
+		
+		JPanel statusPanel = new JPanel();
+		statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+		this.add(statusPanel, BorderLayout.SOUTH);
+		statusPanel.setPreferredSize(new Dimension(this.getWidth(), 16));
+		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
+		statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		statusPanel.add(statusLabel);
 		
 	}
 

@@ -113,6 +113,7 @@ public class Pan extends JPanel
 			g.drawString("to get started", x/2-100, y/2+25);
 		}
 		
+		diag.genStatus();
 	}
 	
 	
