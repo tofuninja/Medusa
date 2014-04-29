@@ -1,9 +1,12 @@
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
 
 import javax.swing.*;
+import javax.swing.filechooser.*;
 import javax.imageio.*;
 
 @SuppressWarnings("serial")
@@ -24,6 +27,8 @@ public class UI extends JPanel implements ActionListener
 	JMenuItem newMenuItem;
 	JMenuItem openLocal;
 	JMenuItem openOnline;
+	JMenuItem saveInteractive;
+	JMenuItem openInteractive;
 	JTabbedPane tabbedPane;
 	
 	JButton webOk;
@@ -35,6 +40,7 @@ public class UI extends JPanel implements ActionListener
 	JCheckBoxMenuItem viewExtendsCheck;
 	JCheckBoxMenuItem viewImplimentsCheck;
 	
+	Vector<ArrayList<String>> arrVector = new Vector<ArrayList<String>>();
 	int diagCount = 0;
 	
 	public UI() 
@@ -87,12 +93,16 @@ public class UI extends JPanel implements ActionListener
 		save = new JMenuItem("Save Image");
 		openLocal = new JMenuItem("Add");
 		openOnline = new JMenuItem("Add web zip");
+		saveInteractive = new JMenuItem("Save Diagram");
+		openInteractive = new JMenuItem("Open Diagram");
 		
 		menu.add(newMenuItem);
 		menu.add(save);
 		menu.add(openLocal);
 		menu.add(openOnline);
-		
+		menu.add(new JSeparator());
+		menu.add(saveInteractive);
+		menu.add(openInteractive);
 		
 		JMenu viewMenu = new JMenu("View");
 		menuBar.add(viewMenu);
@@ -113,6 +123,8 @@ public class UI extends JPanel implements ActionListener
 		openLocal.addActionListener(this);
 		openOnline.addActionListener(this);
 		newMenuItem.addActionListener(this);
+		saveInteractive.addActionListener(this);
+		openInteractive.addActionListener(this);
 		viewRefCheck.addActionListener(this);
 		viewExtendsCheck.addActionListener(this);
 		viewImplimentsCheck.addActionListener(this);
@@ -169,6 +181,7 @@ public class UI extends JPanel implements ActionListener
 				tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
 				tb = (tabFrame)tabbedPane.getSelectedComponent();
 			}
+			arrVector.add(arr);
 			tb.pan.diag.addFiles(arr, 0, 0);
 
 		} 
@@ -182,6 +195,98 @@ public class UI extends JPanel implements ActionListener
 			webText.setText("");
 			webOpenFrame.setVisible(true);
 			//textField.addActionListener(this);
+		}
+		else if (e.getSource() == saveInteractive)
+		{
+			int index = tabbedPane.getSelectedIndex();
+			ArrayList<String> arr = arrVector.get(index);
+			tabFrame tb = (tabFrame)tabbedPane.getSelectedComponent();
+			if(tb == null)
+			{
+				infoBox("Nothing to save.","Error");
+				return;
+			}
+					
+			fc = new JFileChooser();
+			fc.setSelectedFile(new File("diagram.json"));
+			int returnVal = fc.showSaveDialog(this);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				if(!file.getPath().toLowerCase().endsWith(".json")) {
+					file = new File(file.getPath() + ".json");
+				}
+						
+				try {
+					JSONArray list = new JSONArray();
+					for (String s : arr)
+					    list.add(s); 
+					FileWriter fw = new FileWriter(file);
+					fw.write(list.toJSONString());
+					fw.flush();
+					fw.close();
+				} catch (IOException ex) {
+					infoBox("An I/O error has occurred", "Failed");
+				} catch (Exception ex) {
+					infoBox("An unknown error has occurred", "Failed");
+					ex.printStackTrace();
+				}
+			} else {
+				return;
+			}
+		}
+		else if (e.getSource() == openInteractive)
+		{
+			JFileChooser fc = new JFileChooser();
+			fc.setAcceptAllFileFilterUsed(false);
+			fc.setFileFilter(new FileNameExtensionFilter(".json", "json"));
+			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			int returnVal = fc.showOpenDialog(this);
+			String m_folder_path;
+
+			if (returnVal == JFileChooser.APPROVE_OPTION)  {
+				File file = fc.getSelectedFile();
+				m_folder_path = file.getPath();
+			} else {
+				return;
+			}
+						
+			UrlResolver resolv = new UrlResolver(m_folder_path);
+			ArrayList<String> arr = new ArrayList<String>();
+			
+			JSONParser parser = new JSONParser();
+			try {
+				Object obj = parser.parse(new FileReader("c:\\test.json"));
+				JSONArray jsonArr = (JSONArray)obj;
+				Iterator<String> iterator = jsonArr.iterator();
+				while (iterator.hasNext()) {
+					String str = iterator.next();
+					arr.add(str);
+				}
+			} catch (FileNotFoundException ex) {
+				infoBox("FileNotFound Exception", "Failed");
+			} catch (IOException ex) {
+				infoBox("IOException Exception", "Failed");
+			} catch (Exception ex) {
+				infoBox("Unknown Exception", "Failed");
+			}
+			
+			if(arr == null) 
+			{
+				infoBox("Unable to open file or directory", "Error");
+				return;
+			}
+						
+			tabFrame tb = (tabFrame)tabbedPane.getSelectedComponent();
+			if(tb == null) 
+			{
+				diagCount++;
+				tabFrame tf = new tabFrame();
+				tabbedPane.add(tf);
+				tabbedPane.setTabComponentAt(diagCount-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
+				tb = (tabFrame)tabbedPane.getSelectedComponent();
+			}
+			arrVector.add(arr);
+			tb.pan.diag.addFiles(arr, 0, 0);
 		}
 		else if (e.getSource() == webOk)
 		{
@@ -203,6 +308,7 @@ public class UI extends JPanel implements ActionListener
 				tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
 				tb = (tabFrame)tabbedPane.getSelectedComponent();
 			}
+			arrVector.add(arr);
 			tb.pan.diag.addFiles(arr, 0, 0);
 			//textField.addActionListener(this);
 		}
@@ -282,6 +388,8 @@ public class UI extends JPanel implements ActionListener
 		{
 			public void mouseClicked(MouseEvent e) 
 			{
+				int index = tabbedPane.indexOfComponent(tf);
+				arrVector.removeElementAt(index);
 				tabbedPane.remove(tf);
 			}
 		});
