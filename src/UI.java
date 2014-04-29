@@ -266,16 +266,21 @@ public class UI extends JPanel implements ActionListener
 		}
 	}
 	
-	private JPanel createTabPanel(final JTabbedPane tabbedPane, final tabFrame tf, String title) {
+	private JPanel createTabPanel(final JTabbedPane tabbedPane, final tabFrame tf, String title) 
+	{
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
 		JLabel label = new JLabel(title);
-		JButton button = new JButton("X");
-		button.setPreferredSize(new Dimension(15, 9));
+		JButton button = new JButton(MedusaIcons.xIcon);
+		button.setBackground(new Color(0,0,0,0));
+		button.setOpaque(false);
+		button.setPreferredSize(new Dimension(16, 16));
 		button.setBorder(null);
 
-		button.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
+		button.addMouseListener(new MouseAdapter() 
+		{
+			public void mouseClicked(MouseEvent e) 
+			{
 				tabbedPane.remove(tf);
 				diagCount--;
 			}
