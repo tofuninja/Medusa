@@ -26,6 +26,8 @@ public class Pan extends JPanel
 	private float zoom = 1.0f;
 	private Graphics g;
 	public Diagram diag;
+	
+	private static double arrowAng = Math.PI/6.0;
 
 	
 	int startX = 0;
@@ -131,18 +133,18 @@ public class Pan extends JPanel
 		if(diag != null)
 		{
 			
-			int dx;
-			int dy;
+			double dx;
+			double dy;
 			
 			
 			for (int i = 0; i < diag.JavaBlocks.size(); i++) 
 			{
 				DiagramBlock db = diag.JavaBlocks.get(i);
 				Block b = db.block;
-				dx = (int)(b.x*zoom_l - zoomx_l*zoom_l);
-				dy = (int)(b.y*zoom_l - zoomy_l*zoom_l);
-				dx += (int)(b.width*zoom_l) /2;
-				dy += (int)(b.height*zoom_l) /2;
+				dx = (b.x*zoom_l - zoomx_l*zoom_l);
+				dy = (b.y*zoom_l - zoomy_l*zoom_l);
+				dx += (b.width*zoom_l) /2;
+				dy += (b.height*zoom_l) /2;
 				
 				// Draw Connection lines 
 				for(int j = 0; j < db.Class.referenceClasses.size();j++)
@@ -157,11 +159,56 @@ public class Pan extends JPanel
 					}
 					
 					Block b2 = ref.end.diagBlock.block;
-					int dx2 = (int)(b2.x*zoom_l - zoomx_l*zoom_l) + (int)(b2.width*zoom_l) /2;
-					int dy2 = (int)(b2.y*zoom_l - zoomy_l*zoom_l) + (int)(b2.height*zoom_l) /2;
+					double dx2 = (b2.x*zoom_l - zoomx_l*zoom_l) + (b2.width*zoom_l) /2;
+					double dy2 = (b2.y*zoom_l - zoomy_l*zoom_l) + (b2.height*zoom_l) /2;
 					
 					g.setColor(ref.color);
-					g.drawLine(dx, dy, dx2, dy2);
+					g.drawLine((int)dx, (int)dy, (int)dx2, (int)dy2);
+					
+					double angle = Math.atan2(dy2 - dy, dx2 - dx);
+					double boxangle1 = Math.atan2(-b.height/2.0, -b.width/2.0);
+					double boxangle2 = Math.atan2(-b.height/2.0,  b.width/2.0);
+					double boxangle3 = Math.atan2( b.height/2.0,  b.width/2.0);
+					double boxangle4 = Math.atan2( b.height/2.0, -b.width/2.0);
+					PointD p;
+					
+					if(angle >= boxangle1 && angle <= boxangle2)//intersects top
+					{
+						p = lineIntersect(dx, dy, dx2, dy2, 
+								((b.x)*zoom_l - zoomx_l*zoom_l), 			//Line 2 x1
+								((b.y)*zoom_l - zoomy_l*zoom_l),	 		//Line 2 y1
+								((b.x+b.width)*zoom_l - zoomx_l*zoom_l), 	//Line 2 x2
+								((b.y)*zoom_l - zoomy_l*zoom_l));			//Line 2 y2
+					}
+					else if(angle >= boxangle2 && angle <= boxangle3)//intersects right
+					{
+						p = lineIntersect(dx, dy, dx2, dy2, 
+								((b.x+b.width)*zoom_l - zoomx_l*zoom_l), 	//Line 2 x1
+								((b.y)*zoom_l - zoomy_l*zoom_l),	 		//Line 2 y1
+								((b.x+b.width)*zoom_l - zoomx_l*zoom_l), 	//Line 2 x2
+								((b.y+b.height)*zoom_l - zoomy_l*zoom_l));	//Line 2 y2
+					}
+					else if(angle >= boxangle3 && angle <= boxangle4)//intersects bottom
+					{
+						p = lineIntersect(dx, dy, dx2, dy2, 
+								((b.x)*zoom_l - zoomx_l*zoom_l), 			//Line 2 x1
+								((b.y+b.height)*zoom_l - zoomy_l*zoom_l),	//Line 2 y1
+								((b.x+b.width)*zoom_l - zoomx_l*zoom_l), 	//Line 2 x2
+								((b.y+b.height)*zoom_l - zoomy_l*zoom_l));	//Line 2 y2
+					}
+					else//intersects left
+					{
+						p = lineIntersect(dx, dy, dx2, dy2, 
+								((b.x)*zoom_l - zoomx_l*zoom_l), 			//Line 2 x1
+								((b.y)*zoom_l - zoomy_l*zoom_l),	 		//Line 2 y1
+								((b.x)*zoom_l - zoomx_l*zoom_l), 			//Line 2 x2
+								((b.y+b.height)*zoom_l - zoomy_l*zoom_l));	//Line 2 y2
+					}
+					
+					
+					g.drawLine((int)p.x, (int)p.y, (int)(p.x+Math.cos(angle-arrowAng)*10), (int)(p.y+Math.sin(angle-arrowAng)*10));
+					g.drawLine((int)p.x, (int)p.y, (int)(p.x+Math.cos(angle+arrowAng)*10), (int)(p.y+Math.sin(angle+arrowAng)*10));
+					
 					
 					if(ref.thick)
 					{
@@ -177,16 +224,55 @@ public class Pan extends JPanel
 			{
 				DiagramBlock db = diag.JavaBlocks.get(i);
 				Block b = db.block;
-				dx = (int)(b.x*zoom_l - zoomx_l*zoom_l);
-				dy = (int)(b.y*zoom_l - zoomy_l*zoom_l);
+				dx = (b.x*zoom_l - zoomx_l*zoom_l);
+				dy = (b.y*zoom_l - zoomy_l*zoom_l);
 				if(dx >= -b.width*zoom_l && dx < width && dy >= -b.height*zoom_l && dy < height)//on screen
-					g.drawImage(b.img, dx, dy, (int)(b.img.getWidth()*zoom_l), (int)(b.img.getHeight()*zoom_l), null);
+					g.drawImage(b.img, (int)dx, (int)dy, (int)(b.img.getWidth()*zoom_l), (int)(b.img.getHeight()*zoom_l), null);
 			}
 			
 		}
 	}
 	
 	
+	
+	
+	PointD lineIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4)
+	{
+		double m1, c1, m2, c2;
+		double dx, dy;
+		double intersection_X, intersection_Y;
+	 
+
+	    dx = x2 - x1;
+	    dy = y2 - y1;
+	 
+	    m1 = dy / dx;
+	    if(Double.isInfinite(m1)) m1 = 99999999.0;
+	    // y = mx + c
+	    // intercept c = y - mx
+	    c1 = y1 - m1 * x1; // which is same as y2 - slope * x2
+
+	    dx = x4 - x3;
+	    dy = y4 - y3;
+	 
+	    m2 = dy / dx;
+	    if(Double.isInfinite(m2)) m2 = 99999999.0;
+	    // y = mx + c
+	    // intercept c = y - mx
+	    c2 = y3 - m2 * x3; // which is same as y2 - slope * x2
+
+	    if( (m1 - m2) == 0)
+	    {
+	    	System.out.println("didnt intersect...");
+	        return new PointD(x1,x2);// they didn't intersect but at least i can return something in the area... 
+	    }
+	    else
+	    {
+	        intersection_X = (c2 - c1) / (m1 - m2);
+	        intersection_Y = m1 * intersection_X + c1;
+	        return new PointD(intersection_X, intersection_Y);
+	    }
+	}
 	
 	
 	
@@ -366,4 +452,16 @@ class dragCatcher extends DropTarget
         
         //super.drop(dtde);
     }
+}
+
+
+class PointD
+{
+	public double x;
+	public double y;
+	public PointD(double X, double Y)
+	{
+		x = X;
+		y = Y;
+	}
 }
