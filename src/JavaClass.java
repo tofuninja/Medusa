@@ -8,6 +8,7 @@ public class JavaClass {
 	boolean isAbstract = false;
 	String className;
 	String extendsClass;
+	String javaDoc;
 	ArrayList<String> implementsInterfaces;
 	ArrayList<String> methodNames;
 	ArrayList<String> variableNames;
@@ -20,6 +21,7 @@ public class JavaClass {
 	public JavaClass() {
 		className = "";
 		extendsClass = "";
+		javaDoc = "";
 		implementsInterfaces = new ArrayList<String>();
 		methodNames = new ArrayList<String>();
 		variableNames = new ArrayList<String>();
@@ -37,6 +39,7 @@ public class JavaClass {
 		extendsClass = (String)j.get("extends");
 		isInterface = (Boolean)j.get("isInterface");
 		isAbstract = (Boolean)j.get("isAbstract");
+		javaDoc = (String)j.get("doc");
 		
 		JSONArray inames = (JSONArray)j.get("inames");
 		for(Object o: inames) implementsInterfaces.add((String)o);
@@ -74,6 +77,8 @@ public class JavaClass {
 		jc.extendsClass = extendsClass;
 		jc.isAbstract = isAbstract;
 		jc.isInterface = isInterface;
+		jc.referenceNames = new ArrayList<String>();
+		jc.javaDoc = javaDoc;
 		for(String s: implementsInterfaces) jc.implementsInterfaces.add(s);
 		for(String s: methodNames) jc.methodNames.add(s);
 		for(String s: variableNames) jc.variableNames.add(s);
@@ -90,6 +95,7 @@ public class JavaClass {
 		j.put("extends", extendsClass);
 		j.put("isInterface", isInterface);
 		j.put("isAbstract", isAbstract);
+		j.put("doc", javaDoc);
 		
 		JSONArray inames = new JSONArray();
 		inames.addAll(implementsInterfaces);

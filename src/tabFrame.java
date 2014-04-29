@@ -32,7 +32,7 @@ public class tabFrame extends JPanel
 		
 		Diagram diag = new Diagram(tree, statusLabel);
 		
-		Pan p = new Pan();
+		Pan p = new Pan(true);
 		p.setDiag(diag);
 		pan = p;
 		
@@ -69,7 +69,7 @@ public class tabFrame extends JPanel
 		
 		Diagram diag = new Diagram(tree, statusLabel, json);
 		
-		Pan p = new Pan();
+		Pan p = new Pan(true);
 		p.setDiag(diag);
 		pan = p;
 		

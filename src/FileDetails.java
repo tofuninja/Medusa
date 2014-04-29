@@ -66,11 +66,10 @@ public class FileDetails {
         
         	JavaClass jc = new JavaClass();
         	jc.isInterface = n.isInterface();
-        	
-        	
         	jc.className = n.getName();
         	jc.extendsClass = (n.getExtends() != null) ? n.getExtends().get(0).getName() : "";
-        	
+        	JavadocComment doc = n.getJavaDoc();
+        	jc.javaDoc = (doc == null)? "": doc.toString();
         	
         	if((n.getModifiers() & ModifierSet.ABSTRACT) == ModifierSet.ABSTRACT)
         	{
@@ -82,6 +81,14 @@ public class FileDetails {
         	rf.visit(n, null);
      
         	jc.referenceNames = rf.references;
+        	for(String s: jc.referenceNames)
+        	{
+        		if(s.equals(jc.className)) 
+        		{
+        			jc.referenceNames.remove(s);
+        			break;
+        		}
+        	}
         	
         	if (n.getImplements() != null) 
         	{

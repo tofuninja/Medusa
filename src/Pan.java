@@ -21,6 +21,7 @@ public class Pan extends JPanel
 	public static Font font = new Font("Courier New", Font.BOLD, 24);
 	public static Font font2 = new Font("Courier New", Font.PLAIN, 12);
 	
+	private boolean isFullPan = true;
 	private float zoomx = -300f;
 	private float zoomy = -300f;
 	private float zoom = 1.0f;
@@ -39,8 +40,9 @@ public class Pan extends JPanel
 	int clickStartY = 0;
 	int clickTime = -1;
 
-	public Pan() 
+	public Pan(boolean fullPan) 
 	{
+		isFullPan = fullPan;
 		setBackground(Color.BLACK);
 		setPreferredSize(new Dimension(x, y));
 		
@@ -49,7 +51,7 @@ public class Pan extends JPanel
 		addMouseMotionListener(mouse);
 		addMouseWheelListener(mouse);
 		
-		this.setDropTarget(new dragCatcher(this));
+		if(isFullPan) this.setDropTarget(new dragCatcher(this));
 		
 		mouse.wheel = -20;
 		zoom = (float)Math.pow(1.05f, mouse.wheel);
@@ -99,6 +101,13 @@ public class Pan extends JPanel
 			startY = mouse.y;
 			
 			clickTime++;
+		}
+		
+		if(diag == null)
+		{
+			g.setColor(backgroundColor);
+			g.fillRect(0, 0, x, y);
+			return;
 		}
 		
 		if(diag.JavaBlocks.size() != 0)
@@ -336,6 +345,7 @@ public class Pan extends JPanel
 	
 	private void leftClick(int clickDur, int x, int y, int sx, int sy)
 	{
+		if(isFullPan == false) return;
 		double dist = (x-sx)*(x-sx) + (y-sy)*(y-sy);
 		dist = Math.sqrt(dist);
 		if(dist <= 5.0)// we will count this as a click... longer and its prob panning... 
@@ -354,9 +364,8 @@ public class Pan extends JPanel
 			
 			if(clickBlock != null)
 			{
-				System.out.println(clickBlock.Class.className);
-				System.out.println(clickBlock.Class.extendsClass);
-				System.out.println(clickBlock.Class.implementsInterfaces);
+				classViewer cv = new classViewer(diag,clickBlock.Class);
+				cv.setVisible(true);
 			}
 			
 		}

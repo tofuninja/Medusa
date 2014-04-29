@@ -109,6 +109,12 @@ class Diagram
 		}
 		
 		
+		addJavaClasses(class_list, x, y);
+	}
+	
+	
+	public void addJavaClasses(List<JavaClass> class_list, int x, int y)
+	{
 		ArrayList<DiagramBlock> newBlocks = new ArrayList<DiagramBlock>();
 		
 		for(int i = 0; i < class_list.size(); i++ ) 
@@ -175,6 +181,7 @@ class Diagram
 	
 	public void genStatus()
 	{
+		if(statusLabel == null) return;
 		String status = "Node Count:" + JavaBlocks.size();
 		
 		if(phys != null && phys.runTime > 0)
@@ -186,6 +193,7 @@ class Diagram
 	
 	private void createNodes(ArrayList<DiagramBlock> class_list) 
 	{
+		if(node == null) return;
 		DefaultTreeModel model = (DefaultTreeModel)node.getModel();
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
 		
