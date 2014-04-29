@@ -2,12 +2,14 @@ import java.io.*;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
 
 import javax.swing.*;
-import javax.swing.filechooser.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.imageio.*;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 @SuppressWarnings("serial")
 public class UI extends JPanel implements ActionListener
@@ -40,7 +42,6 @@ public class UI extends JPanel implements ActionListener
 	JCheckBoxMenuItem viewExtendsCheck;
 	JCheckBoxMenuItem viewImplimentsCheck;
 	
-	Vector<ArrayList<String>> arrVector = new Vector<ArrayList<String>>();
 	int diagCount = 0;
 	
 	public UI() 
@@ -53,9 +54,10 @@ public class UI extends JPanel implements ActionListener
 		this.add(tabbedPane,BorderLayout.CENTER);
 		
 		diagCount ++;
-		tabFrame tf = new tabFrame();
+		tabFrame tf = new tabFrame("diag"+diagCount);
+		tabLabelPane tl = new tabLabelPane(tabbedPane, tf);
 		tabbedPane.add(tf);
-		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
+		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, tl);
 		
 		webOpenFrame = new JFrame();
 		webOpenFrame.setLayout(new BorderLayout(10,10));
@@ -137,10 +139,11 @@ public class UI extends JPanel implements ActionListener
 	{
 		if(e.getSource() == newMenuItem)
 		{
-			diagCount++;
-			tabFrame tf = new tabFrame();
+			diagCount ++;
+			tabFrame tf = new tabFrame("diag"+diagCount);
+			tabLabelPane tl = new tabLabelPane(tabbedPane, tf);
 			tabbedPane.add(tf);
-			tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
+			tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, tl);
 			tabbedPane.setSelectedComponent(tf);
 		}
 		else if (e.getSource() == openLocal) 
@@ -175,13 +178,13 @@ public class UI extends JPanel implements ActionListener
 			tabFrame tb = (tabFrame)tabbedPane.getSelectedComponent();
 			if(tb == null) 
 			{
-				diagCount++;
-				tabFrame tf = new tabFrame();
+				diagCount ++;
+				tabFrame tf = new tabFrame("diag"+diagCount);
+				tabLabelPane tl = new tabLabelPane(tabbedPane, tf);
 				tabbedPane.add(tf);
-				tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
+				tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, tl);
 				tb = (tabFrame)tabbedPane.getSelectedComponent();
 			}
-			arrVector.add(arr);
 			tb.pan.diag.addFiles(arr, 0, 0);
 
 		} 
@@ -198,8 +201,7 @@ public class UI extends JPanel implements ActionListener
 		}
 		else if (e.getSource() == saveInteractive)
 		{
-			int index = tabbedPane.getSelectedIndex();
-			ArrayList<String> arr = arrVector.get(index);
+			
 			tabFrame tb = (tabFrame)tabbedPane.getSelectedComponent();
 			if(tb == null)
 			{
@@ -207,86 +209,96 @@ public class UI extends JPanel implements ActionListener
 				return;
 			}
 					
+			
 			fc = new JFileChooser();
-			fc.setSelectedFile(new File("diagram.json"));
+			fc.setSelectedFile(new File(tb.name + ".json"));
 			int returnVal = fc.showSaveDialog(this);
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
+			
+			if (returnVal == JFileChooser.APPROVE_OPTION) // Good to save
+			{
 				File file = fc.getSelectedFile();
-				if(!file.getPath().toLowerCase().endsWith(".json")) {
+				if(!file.getPath().toLowerCase().endsWith(".json")) // Check extension
+				{
 					file = new File(file.getPath() + ".json");
 				}
 						
-				try {
-					JSONArray list = new JSONArray();
-					for (String s : arr)
-					    list.add(s); 
+				try 
+				{
 					FileWriter fw = new FileWriter(file);
-					fw.write(list.toJSONString());
+					fw.write(tb.pan.diag.toJSON().toJSONString());
+					tb.name = file.getName().substring(0, file.getName().lastIndexOf('.'));
+					tb.tab.label.setText(tb.name);
 					fw.flush();
 					fw.close();
-				} catch (IOException ex) {
+				} 
+				catch (IOException ex) 
+				{
 					infoBox("An I/O error has occurred", "Failed");
-				} catch (Exception ex) {
+				} 
+				catch (Exception ex) 
+				{
 					infoBox("An unknown error has occurred", "Failed");
 					ex.printStackTrace();
 				}
-			} else {
-				return;
+				
+			} 
+			else 
+			{
+				return;//They canceled 
 			}
 		}
 		else if (e.getSource() == openInteractive)
 		{
+			
 			JFileChooser fc = new JFileChooser();
 			fc.setAcceptAllFileFilterUsed(false);
-			fc.setFileFilter(new FileNameExtensionFilter(".json", "json"));
-			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			fc.setFileFilter(new FileNameExtensionFilter("JSON File", "json"));
+			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			int returnVal = fc.showOpenDialog(this);
-			String m_folder_path;
+			File file;
 
-			if (returnVal == JFileChooser.APPROVE_OPTION)  {
-				File file = fc.getSelectedFile();
-				m_folder_path = file.getPath();
-			} else {
+			if (returnVal == JFileChooser.APPROVE_OPTION)  
+			{
+				file = fc.getSelectedFile();
+			} 
+			else 
+			{
 				return;
 			}
-						
-			UrlResolver resolv = new UrlResolver(m_folder_path);
-			ArrayList<String> arr = new ArrayList<String>();
+			
 			
 			JSONParser parser = new JSONParser();
-			try {
-				Object obj = parser.parse(new FileReader("c:\\test.json"));
-				JSONArray jsonArr = (JSONArray)obj;
-				Iterator<String> iterator = jsonArr.iterator();
-				while (iterator.hasNext()) {
-					String str = iterator.next();
-					arr.add(str);
-				}
-			} catch (FileNotFoundException ex) {
-				infoBox("FileNotFound Exception", "Failed");
-			} catch (IOException ex) {
-				infoBox("IOException Exception", "Failed");
-			} catch (Exception ex) {
-				infoBox("Unknown Exception", "Failed");
+			try 
+			{
+				JSONObject json = (JSONObject)parser.parse(new FileReader(file));
+				diagCount ++;
+				tabFrame tf = new tabFrame(file.getName().substring(0, file.getName().lastIndexOf('.')), json);
+				tabLabelPane tl = new tabLabelPane(tabbedPane, tf);
+				tabbedPane.add(tf);
+				tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, tl);
+				tabbedPane.setSelectedComponent(tf);
+			} 
+			catch (FileNotFoundException e1) 
+			{
+				infoBox("File not found", "Error");
+				e1.printStackTrace();
+			} 
+			catch (IOException e1) 
+			{
+				infoBox("IO error", "Error");
+				e1.printStackTrace();
+			} 
+			catch (ParseException e1) 
+			{
+				infoBox("Parsing error, file may be corupted", "Error");
+				e1.printStackTrace();
+			}
+			catch (Exception e1)
+			{
+				infoBox("Unknown Error", "Error");
+				e1.printStackTrace();
 			}
 			
-			if(arr == null) 
-			{
-				infoBox("Unable to open file or directory", "Error");
-				return;
-			}
-						
-			tabFrame tb = (tabFrame)tabbedPane.getSelectedComponent();
-			if(tb == null) 
-			{
-				diagCount++;
-				tabFrame tf = new tabFrame();
-				tabbedPane.add(tf);
-				tabbedPane.setTabComponentAt(diagCount-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
-				tb = (tabFrame)tabbedPane.getSelectedComponent();
-			}
-			arrVector.add(arr);
-			tb.pan.diag.addFiles(arr, 0, 0);
 		}
 		else if (e.getSource() == webOk)
 		{
@@ -303,12 +315,12 @@ public class UI extends JPanel implements ActionListener
 			if (tb == null) 
 			{
 				diagCount ++;
-				tabFrame tf = new tabFrame();
+				tabFrame tf = new tabFrame("diag"+diagCount);
+				tabLabelPane tl = new tabLabelPane(tabbedPane, tf);
 				tabbedPane.add(tf);
-				tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
+				tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, tl);
 				tb = (tabFrame)tabbedPane.getSelectedComponent();
 			}
-			arrVector.add(arr);
 			tb.pan.diag.addFiles(arr, 0, 0);
 			//textField.addActionListener(this);
 		}
@@ -373,31 +385,6 @@ public class UI extends JPanel implements ActionListener
 		}
 	}
 	
-	private JPanel createTabPanel(final JTabbedPane tabbedPane, final tabFrame tf, String title) 
-	{
-		JPanel panel = new JPanel();
-		panel.setOpaque(false);
-		JLabel label = new JLabel(title);
-		JButton button = new JButton(MedusaIcons.xIcon);
-		button.setBackground(new Color(0,0,0,0));
-		button.setOpaque(false);
-		button.setPreferredSize(new Dimension(16, 16));
-		button.setBorder(null);
-
-		button.addMouseListener(new MouseAdapter() 
-		{
-			public void mouseClicked(MouseEvent e) 
-			{
-				int index = tabbedPane.indexOfComponent(tf);
-				arrVector.removeElementAt(index);
-				tabbedPane.remove(tf);
-			}
-		});
-		
-		panel.add(label);
-		panel.add(button);
-		return panel;
-	}
 
 	public static void infoBox(String infoMessage, String title)
     {

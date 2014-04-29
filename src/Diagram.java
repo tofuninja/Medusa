@@ -6,6 +6,9 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 class DiagramBlock {
 	JavaClass Class;
 	public Block block;
@@ -42,9 +45,30 @@ class DiagramBlock {
 		else
 			col = new Color(196, 121, 126);
 		
-		block = new Block(str, x, y, col, Pan.font);
+		block = new Block(str, x, y, col);
 		
 	} 
+	
+	
+	
+	public DiagramBlock(JSONObject j) 
+	{	
+		Class = new JavaClass((JSONObject)j.get("class"));
+		block = new Block((JSONObject)j.get("block"));
+		Class.diagBlock = this;
+	} 
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	public JSONObject toJSON()
+	{
+		JSONObject j = new JSONObject();
+		j.put("block", block.toJSON());
+		j.put("class", Class.toJSON());
+		return j;
+	}
+	
 }
 
 class Diagram 
@@ -58,6 +82,68 @@ class Diagram
 	{
 		node = top;
 		statusLabel = status;
+	}
+	
+	
+	public Diagram(JTree top, JLabel status, JSONObject json) 
+	{
+		node = top;
+		statusLabel = status;
+		addJSON(json);
+	}
+	
+	public void addJSON(JSONObject j)
+	{
+		JSONArray arr = (JSONArray)j.get("blocks");
+		
+		ArrayList<DiagramBlock> newBlocks = new ArrayList<DiagramBlock>();
+		// load from JSON
+		for(Object o: arr)
+		{
+			JSONObject json = (JSONObject)o;
+			newBlocks.add(new DiagramBlock(json));
+		}
+		
+		// Find all ref
+		for(DiagramBlock db : newBlocks)
+		{
+			// Find all connections between current classes
+			for(DiagramBlock db2 : newBlocks)
+			{
+				for(String ref: db.Class.referenceNames)
+				{
+					if(ref.equals(db2.Class.className))
+					{
+						db.Class.referenceClasses.add(new javaRef(db.Class,db2.Class));
+					}
+				}	
+			}
+			
+			// Find all connections between classes already added
+			for(DiagramBlock db2: JavaBlocks)
+			{
+				// if jc ref db
+				for(String ref: db.Class.referenceNames)
+				{
+					if(ref.equals(db2.Class.className))
+					{
+						db.Class.referenceClasses.add(new javaRef(db.Class, db2.Class));
+					}
+				}
+				
+				// if db ref jc
+				for(String ref: db2.Class.referenceNames)
+				{
+					if(ref.equals(db.Class.className))
+					{
+						db2.Class.referenceClasses.add(new javaRef(db2.Class, db.Class));
+					}
+				}
+			}
+		}
+		
+		JavaBlocks.addAll(newBlocks);
+		createNodes(newBlocks);
 	}
 	
 	
@@ -132,8 +218,20 @@ class Diagram
 		
 		JavaBlocks.addAll(newBlocks);
 		
-		createNodes(class_list);
+		createNodes(newBlocks);
 		runPhys(100000);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public JSONObject toJSON()
+	{
+		JSONObject j = new JSONObject();
+		JSONArray array = new JSONArray();
+		for(DiagramBlock d: JavaBlocks)
+			array.add(d.toJSON());
+		j.put("blocks", array);
+		return j;
 	}
 	
 	
@@ -148,13 +246,14 @@ class Diagram
 	}
 	
 	
-	private void createNodes(ArrayList<JavaClass> class_list) 
+	private void createNodes(ArrayList<DiagramBlock> class_list) 
 	{
 		DefaultTreeModel model = (DefaultTreeModel)node.getModel();
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
 		
-		for (JavaClass jc: class_list )
+		for (DiagramBlock db: class_list )
 		{
+			JavaClass jc = db.Class;
 			DefaultMutableTreeNode jClass;
 			if(jc.isInterface)
 			{

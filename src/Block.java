@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import org.json.simple.JSONObject;
+
 
 class Block 
 {
@@ -8,7 +10,6 @@ class Block
 	public double x;
 	public double y;
 	public Color color;
-	public Font font;
 	public int width;
 	public int height;
 	public BufferedImage img;
@@ -20,13 +21,18 @@ class Block
 	private int maxLineWidth;
 	private int ascent;
 	
-	public Block(String text, int x, int y, Color color, Font font)
+	
+	public Block(JSONObject j)
+	{
+		this((String)j.get("text"),(double)j.get("x"),(double)j.get("y"),new Color(((Long)j.get("color")).intValue()));
+	}
+	
+	public Block(String text, double x, double y, Color color)
 	{
 		this.text = text;
 		this.x = x;
 		this.y = y;
 		this.color = color;
-		this.font = font;
 		
 
 		lines = text.split("\n");
@@ -34,7 +40,7 @@ class Block
 		
 		//Get box size from text
 		Canvas c = new Canvas();//This feels like such a hack just to get a FontMetrics :/
-		FontMetrics metrics = c.getFontMetrics(font);
+		FontMetrics metrics = c.getFontMetrics(Pan.font);
 		lineHeight = metrics.getHeight();
 		height = lineHeight*lines.length + border*2;
 		maxLineWidth = 0;
@@ -62,7 +68,7 @@ class Block
 		g.drawRoundRect(0,0,width,height,15,15);
 		
 		//Draw out each line
-		g.setFont(font);
+		g.setFont(Pan.font);
 		int cx = border;
 		int cy = ascent + border;
 		for(int i = 0; i < lines.length; i++)
@@ -70,6 +76,18 @@ class Block
 			g.drawString(lines[i],cx ,cy + i*lineHeight);
 		}
 		
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public JSONObject toJSON()
+	{
+		JSONObject j = new JSONObject();
+		j.put("text", text);
+		j.put("x", x);
+		j.put("y", y);
+		j.put("color", color.getRGB());
+		return j;
 	}
 	
 

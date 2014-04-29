@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -12,13 +13,18 @@ import javax.swing.border.BevelBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
+import org.json.simple.JSONObject;
+
 
 @SuppressWarnings("serial")
 public class tabFrame extends JPanel
 {
 	public Pan pan;
-	public tabFrame()
+	public String name;
+	public tabLabelPane tab;
+	public tabFrame(String tabName)
 	{
+		name = tabName;
 		// adr.setCaretPosition(adr.getDocument().getLength())
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode(new nodeType("Medusa", "d"));
 		JTree tree = new JTree(top);
@@ -50,6 +56,44 @@ public class tabFrame extends JPanel
 		statusPanel.add(statusLabel);
 		
 	}
+	
+	
+	
+	public tabFrame(String tabName, JSONObject json)
+	{
+		name = tabName;
+		// adr.setCaretPosition(adr.getDocument().getLength())
+		DefaultMutableTreeNode top = new DefaultMutableTreeNode(new nodeType("Medusa", "d"));
+		JTree tree = new JTree(top);
+		JLabel statusLabel = new JLabel("");
+		
+		Diagram diag = new Diagram(tree, statusLabel, json);
+		
+		Pan p = new Pan();
+		p.setDiag(diag);
+		pan = p;
+		
+		JSplitPane pane = new JSplitPane();
+		pane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+		
+		tree.setCellRenderer(new MyRenderer());
+		JScrollPane treeView = new JScrollPane(tree);
+		pane.setLeftComponent(treeView);
+		pane.setRightComponent(p);
+		pane.setDividerLocation(150);
+		this.setLayout(new BorderLayout());
+		this.add(pane, BorderLayout.CENTER);
+		
+		JPanel statusPanel = new JPanel();
+		statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+		this.add(statusPanel, BorderLayout.SOUTH);
+		statusPanel.setPreferredSize(new Dimension(this.getWidth(), 16));
+		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
+		statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		statusPanel.add(statusLabel);
+		
+	}
+	
 
 }
 
