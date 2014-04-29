@@ -49,7 +49,7 @@ public class UI extends JPanel implements ActionListener
 		diagCount ++;
 		tabFrame tf = new tabFrame();
 		tabbedPane.add(tf);
-		tabbedPane.setTabComponentAt(diagCount-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
+		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
 		
 		webOpenFrame = new JFrame();
 		webOpenFrame.setLayout(new BorderLayout(10,10));
@@ -127,7 +127,7 @@ public class UI extends JPanel implements ActionListener
 			diagCount++;
 			tabFrame tf = new tabFrame();
 			tabbedPane.add(tf);
-			tabbedPane.setTabComponentAt(diagCount-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
+			tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
 			tabbedPane.setSelectedComponent(tf);
 		}
 		else if (e.getSource() == openLocal) 
@@ -165,7 +165,7 @@ public class UI extends JPanel implements ActionListener
 				diagCount++;
 				tabFrame tf = new tabFrame();
 				tabbedPane.add(tf);
-				tabbedPane.setTabComponentAt(diagCount-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
+				tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
 				tb = (tabFrame)tabbedPane.getSelectedComponent();
 			}
 			tb.pan.diag.addFiles(arr, 0, 0);
@@ -199,7 +199,7 @@ public class UI extends JPanel implements ActionListener
 				diagCount ++;
 				tabFrame tf = new tabFrame();
 				tabbedPane.add(tf);
-				tabbedPane.setTabComponentAt(diagCount-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
+				tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
 				tb = (tabFrame)tabbedPane.getSelectedComponent();
 			}
 			tb.pan.diag.addFiles(arr, 0, 0);
@@ -282,7 +282,6 @@ public class UI extends JPanel implements ActionListener
 			public void mouseClicked(MouseEvent e) 
 			{
 				tabbedPane.remove(tf);
-				diagCount--;
 			}
 		});
 		
