@@ -1,7 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -36,9 +35,7 @@ public class UI extends JPanel implements ActionListener
 	JCheckBoxMenuItem viewExtendsCheck;
 	JCheckBoxMenuItem viewImplimentsCheck;
 	
-	
 	int diagCount = 0;
-	
 	
 	public UI() 
 	{
@@ -51,7 +48,8 @@ public class UI extends JPanel implements ActionListener
 		
 		diagCount ++;
 		tabFrame tf = new tabFrame();
-		tabbedPane.addTab("diag"+diagCount, tf);
+		tabbedPane.add(tf);
+		tabbedPane.setTabComponentAt(diagCount-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
 		
 		webOpenFrame = new JFrame();
 		webOpenFrame.setLayout(new BorderLayout(10,10));
@@ -76,10 +74,8 @@ public class UI extends JPanel implements ActionListener
 		webOpenFrame.add(webCancel, BorderLayout.EAST);
 		webCancel.addActionListener(this);		
 		
-		
 		webOpenFrame.pack();
 	}
-	
 
 	public JMenuBar menu() 
 	{
@@ -97,7 +93,6 @@ public class UI extends JPanel implements ActionListener
 		menu.add(newMenuItem);
 		menu.add(save);
 		
-		
 		JMenu viewMenu = new JMenu("View");
 		menuBar.add(viewMenu);
 		
@@ -112,7 +107,6 @@ public class UI extends JPanel implements ActionListener
 		viewMenu.add(viewRefCheck);
 		viewMenu.add(viewExtendsCheck);
 		viewMenu.add(viewImplimentsCheck);
-		
 		
 		save.addActionListener(this);
 		openLocal.addActionListener(this);
@@ -130,9 +124,10 @@ public class UI extends JPanel implements ActionListener
 	{
 		if(e.getSource() == newMenuItem)
 		{
-			diagCount ++;
+			diagCount++;
 			tabFrame tf = new tabFrame();
-			tabbedPane.addTab("diag"+diagCount, tf);
+			tabbedPane.add(tf);
+			tabbedPane.setTabComponentAt(diagCount-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
 			tabbedPane.setSelectedComponent(tf);
 		}
 		else if (e.getSource() == openLocal) 
@@ -167,9 +162,10 @@ public class UI extends JPanel implements ActionListener
 			tabFrame tb = (tabFrame)tabbedPane.getSelectedComponent();
 			if(tb == null) 
 			{
-				diagCount ++;
+				diagCount++;
 				tabFrame tf = new tabFrame();
-				tabbedPane.addTab("diag"+diagCount, tf);
+				tabbedPane.add(tf);
+				tabbedPane.setTabComponentAt(diagCount-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
 				tb = (tabFrame)tabbedPane.getSelectedComponent();
 			}
 			tb.pan.diag.addFiles(arr, 0, 0);
@@ -191,18 +187,19 @@ public class UI extends JPanel implements ActionListener
 			UrlResolver resolv = new UrlResolver(webText.getText());
 			webOpenFrame.setVisible(false);
 			ArrayList<String> arr = resolv.resolve();
-			if(arr == null) 
+			if (arr == null) 
 			{
 				infoBox("Unable to open file or directory", "Error");
 				return;
 			}
 			
 			tabFrame tb = (tabFrame)tabbedPane.getSelectedComponent();
-			if(tb == null) 
+			if (tb == null) 
 			{
 				diagCount ++;
 				tabFrame tf = new tabFrame();
-				tabbedPane.addTab("diag"+diagCount, tf);
+				tabbedPane.add(tf);
+				tabbedPane.setTabComponentAt(diagCount-1, createTabPanel(tabbedPane, tf, "diag"+diagCount));
 				tb = (tabFrame)tabbedPane.getSelectedComponent();
 			}
 			tb.pan.diag.addFiles(arr, 0, 0);
@@ -226,8 +223,6 @@ public class UI extends JPanel implements ActionListener
 			javaRef.enabled[2] = viewImplimentsCheck.getState();
 		}
 	}
-	
-	
 	
 	private  void SaveImage()
 	{
@@ -256,7 +251,7 @@ public class UI extends JPanel implements ActionListener
 			}
 			catch (IOException e) 
 			{
-	        	
+	        	e.printStackTrace();
 	        }
 			catch(OutOfMemoryError e)
 			{
@@ -269,17 +264,32 @@ public class UI extends JPanel implements ActionListener
 			// Return and do nothing
 			return;
 		}
-		
-		
 	}
 	
+	private JPanel createTabPanel(final JTabbedPane tabbedPane, final tabFrame tf, String title) {
+		JPanel panel = new JPanel();
+		panel.setOpaque(false);
+		JLabel label = new JLabel(title);
+		JButton button = new JButton("X");
+		button.setPreferredSize(new Dimension(15, 9));
+		button.setBorder(null);
 
+		button.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				tabbedPane.remove(tf);
+				diagCount--;
+			}
+		});
+		
+		panel.add(label);
+		panel.add(button);
+		return panel;
+	}
 
 	public static void infoBox(String infoMessage, String title)
     {
         JOptionPane.showMessageDialog(null, infoMessage, title, JOptionPane.INFORMATION_MESSAGE);
     }
-	
 
 	public static void main(String[] args) 
 	{
@@ -288,7 +298,6 @@ public class UI extends JPanel implements ActionListener
 			public void run() 
 			{
 				UIManager.put("swing.boldMetal", Boolean.FALSE);
-				
 				
 				frame = new JFrame("Medusa");
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -305,7 +314,6 @@ public class UI extends JPanel implements ActionListener
 				
 				//frame.setResizable(false);
 				frame.pack();
-				
 			}
 		});
 	}
