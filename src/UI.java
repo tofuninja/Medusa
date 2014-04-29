@@ -93,18 +93,20 @@ public class UI extends JPanel implements ActionListener
 		menuBar.add(menu);
 		newMenuItem = new JMenuItem("New");
 		save = new JMenuItem("Save Image");
-		openLocal = new JMenuItem("Add");
+		openLocal = new JMenuItem("Add File/Directory");
 		openOnline = new JMenuItem("Add web zip");
-		saveInteractive = new JMenuItem("Save Diagram");
-		openInteractive = new JMenuItem("Open Diagram");
+		saveInteractive = new JMenuItem("Save");
+		openInteractive = new JMenuItem("Open");
 		
 		menu.add(newMenuItem);
+		menu.add(saveInteractive);
+		menu.add(openInteractive);
+		menu.add(new JSeparator());
 		menu.add(save);
 		menu.add(openLocal);
 		menu.add(openOnline);
-		menu.add(new JSeparator());
-		menu.add(saveInteractive);
-		menu.add(openInteractive);
+		
+		
 		
 		JMenu viewMenu = new JMenu("View");
 		menuBar.add(viewMenu);
