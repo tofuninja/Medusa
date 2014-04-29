@@ -231,7 +231,10 @@ class classInfoPanel extends JPanel
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		//this.setBackground(Color.white);
 		
-		String doc = jc.javaDoc.replaceAll("\n", "<br>");
+		String doc = jc.javaDoc.replaceAll("/\\*\\*", "");
+		doc = doc.replaceAll("\\*/", "");
+		doc = doc.replaceAll("\n\\*", "");
+		doc = doc.replaceAll("\n \\*", "");
 		JPanel p = new JPanel(new BorderLayout());
 		JLabel docL = new JLabel("<html><body align=\"left\">Documentation:<br>" + doc + "</body></html>", 0);
 		docL.setVerticalAlignment(0);
