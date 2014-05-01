@@ -240,9 +240,80 @@ public class Pan extends JPanel
 			}
 			
 		}
+		
+		
+		if(UI.me.dipLegend)
+		{
+			renderLegend(g);
+		}
 	}
 	
 	
+	private Block legClassBlock = new Block("Class",0,0,new Color(196, 121, 126));
+	private Block legInterfaceBlock = new Block("Interface",0,0,new Color(214, 162, 88));
+	private Block legAbstractBlock = new Block("Abstract Class",0,0,new Color(139, 144, 217));
+	
+	private void renderLegend(Graphics g)
+	{
+		int w = 125;
+		int h = 160;
+		int x = 10;
+		int y = 10;
+		
+		g.setColor(Color.white);
+		g.fillRoundRect(x, y, w, h, 15, 15);
+		
+		int tempy = y + 10;
+		g.drawImage(legClassBlock.img, x + 10, tempy,legClassBlock.img.getWidth()/2,legClassBlock.img.getHeight()/2, null);
+		tempy += legClassBlock.img.getHeight()/2 + 5;
+		g.drawImage(legInterfaceBlock.img, x + 10, tempy ,legInterfaceBlock.img.getWidth()/2,legInterfaceBlock.img.getHeight()/2, null);
+		tempy += legInterfaceBlock.img.getHeight()/2 + 5;
+		g.drawImage(legAbstractBlock.img, x + 10, tempy ,legAbstractBlock.img.getWidth()/2,legAbstractBlock.img.getHeight()/2, null);
+		tempy += legAbstractBlock.img.getHeight()/2 + 10;
+		
+		g.setFont(font2);
+		
+		double dx = x + 10;
+		double dy = tempy;
+		double dx2 = dx + 30;
+		double dy2 = tempy;
+		g.setColor(javaRef.normalCol);
+		g.drawLine((int)dx, (int)dy, (int)dx2, (int)dy2);
+		double angle = Math.atan2(dy2 - dy, dx2 - dx);
+		g.drawLine((int)dx, (int)dy2, (int)(dx+Math.cos(angle-arrowAng)*10), (int)(dy+Math.sin(angle-arrowAng)*10));
+		g.drawLine((int)dx, (int)dy2, (int)(dx+Math.cos(angle+arrowAng)*10), (int)(dy+Math.sin(angle+arrowAng)*10));
+		g.setColor(Color.black);
+		g.drawString("References", x + 43, tempy+4);
+		
+		tempy += 20;
+		dx = x + 10;
+		dy = tempy;
+		dx2 = dx + 30;
+		dy2 = tempy;
+		g.setColor(javaRef.extCol);
+		g.drawLine((int)dx, (int)dy, (int)dx2, (int)dy2);
+		angle = Math.atan2(dy2 - dy, dx2 - dx);
+		g.drawLine((int)dx, (int)dy2, (int)(dx+Math.cos(angle-arrowAng)*10), (int)(dy+Math.sin(angle-arrowAng)*10));
+		g.drawLine((int)dx, (int)dy2, (int)(dx+Math.cos(angle+arrowAng)*10), (int)(dy+Math.sin(angle+arrowAng)*10));
+		g.setColor(Color.black);
+		g.drawString("Extends", x + 43, tempy+4);
+		
+		tempy += 20;
+		dx = x + 10;
+		dy = tempy;
+		dx2 = dx + 30;
+		dy2 = tempy;
+		g.setColor(javaRef.interCol);
+		g.drawLine((int)dx, (int)dy, (int)dx2, (int)dy2);
+		angle = Math.atan2(dy2 - dy, dx2 - dx);
+		g.drawLine((int)dx, (int)dy2, (int)(dx+Math.cos(angle-arrowAng)*10), (int)(dy+Math.sin(angle-arrowAng)*10));
+		g.drawLine((int)dx, (int)dy2, (int)(dx+Math.cos(angle+arrowAng)*10), (int)(dy+Math.sin(angle+arrowAng)*10));
+		g.setColor(Color.black);
+		g.drawString("Implements", x + 43, tempy+4);
+		
+		g.setColor(Color.black);
+		g.drawRoundRect(x, y, w, h, 15, 15);
+	}
 	
 	
 	PointD lineIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4)

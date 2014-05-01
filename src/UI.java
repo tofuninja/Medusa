@@ -41,6 +41,9 @@ public class UI extends JPanel implements ActionListener
 	JCheckBoxMenuItem viewRefCheck;
 	JCheckBoxMenuItem viewExtendsCheck;
 	JCheckBoxMenuItem viewImplimentsCheck;
+	JCheckBoxMenuItem legendCheck;
+	
+	public boolean dipLegend = true;
 	
 	int diagCount = 0;
 	
@@ -114,14 +117,17 @@ public class UI extends JPanel implements ActionListener
 		viewRefCheck = new JCheckBoxMenuItem("View Reference Connections");
 		viewExtendsCheck = new JCheckBoxMenuItem("View Extends Connections");
 		viewImplimentsCheck = new JCheckBoxMenuItem("View Implements Connections");
+		legendCheck = new JCheckBoxMenuItem("View Legend");
 		
 		viewRefCheck.setState(true);
 		viewExtendsCheck.setState(true);
 		viewImplimentsCheck.setState(true);
+		legendCheck.setState(true);
 		
 		viewMenu.add(viewRefCheck);
 		viewMenu.add(viewExtendsCheck);
 		viewMenu.add(viewImplimentsCheck);
+		viewMenu.add(legendCheck);
 		
 		save.addActionListener(this);
 		openLocal.addActionListener(this);
@@ -132,6 +138,7 @@ public class UI extends JPanel implements ActionListener
 		viewRefCheck.addActionListener(this);
 		viewExtendsCheck.addActionListener(this);
 		viewImplimentsCheck.addActionListener(this);
+		legendCheck.addActionListener(this);
 		
 		return menuBar;
 	}
@@ -342,6 +349,10 @@ public class UI extends JPanel implements ActionListener
 		else if(e.getSource() == viewImplimentsCheck)
 		{
 			javaRef.enabled[2] = viewImplimentsCheck.getState();
+		}
+		else if(e.getSource() == legendCheck)
+		{
+			dipLegend = legendCheck.getState();
 		}
 	}
 	
