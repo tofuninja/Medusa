@@ -35,6 +35,8 @@ class DiagramBlock {
 			col = new Color(214, 162, 88);
 		else if(c.isAbstract)
 			col = new Color(139, 144, 217);
+		else if(c.isError)
+			col = new Color(252, 91, 91);
 		else
 			col = new Color(196, 121, 126);
 		

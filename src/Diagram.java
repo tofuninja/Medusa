@@ -110,19 +110,27 @@ class Diagram
 		}
 		
 		
-		addJavaClasses(class_list, x, y);
+		String error = addJavaClasses(class_list, x, y);
+		if(!error.equals("")) UI.infoBox("Could not load files\n\n"+error, "error");
 		
 	}
 	
 	
-	public void addJavaClasses(List<JavaClass> class_list, int x, int y)
+	public String addJavaClasses(List<JavaClass> class_list, int x, int y)
 	{
 		stopPhys();
 		ArrayList<DiagramBlock> newBlocks = new ArrayList<DiagramBlock>();
+		String error = "";
 		
 		for(int i = 0; i < class_list.size(); i++ ) 
 		{
 			JavaClass jc = class_list.get(i);
+			if(jc.isError) 
+			{
+				error+=jc.className + "\n";
+				continue;
+			}
+			
 			
 			// Find all connections between current classes
 			for(int j = 0; j < class_list.size(); j++ ) 
@@ -167,6 +175,7 @@ class Diagram
 		
 		createNodes(newBlocks);
 		runPhys(100000);
+		return error;
 	}
 	
 	

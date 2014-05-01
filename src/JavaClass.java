@@ -6,6 +6,7 @@ import org.json.simple.JSONObject;
 public class JavaClass {
 	boolean isInterface = false;
 	boolean isAbstract = false;
+	boolean isError = false;
 	String className;
 	String extendsClass;
 	String javaDoc;
@@ -39,6 +40,7 @@ public class JavaClass {
 		extendsClass = (String)j.get("extends");
 		isInterface = (Boolean)j.get("isInterface");
 		isAbstract = (Boolean)j.get("isAbstract");
+		isError = (Boolean)j.get("isError");
 		javaDoc = (String)j.get("doc");
 		
 		JSONArray inames = (JSONArray)j.get("inames");
@@ -79,6 +81,7 @@ public class JavaClass {
 		jc.isInterface = isInterface;
 		jc.referenceNames = new ArrayList<String>();
 		jc.javaDoc = javaDoc;
+		jc.isError = isError;
 		for(String s: implementsInterfaces) jc.implementsInterfaces.add(s);
 		for(String s: methodNames) jc.methodNames.add(s);
 		for(String s: variableNames) jc.variableNames.add(s);
@@ -96,6 +99,7 @@ public class JavaClass {
 		j.put("isInterface", isInterface);
 		j.put("isAbstract", isAbstract);
 		j.put("doc", javaDoc);
+		j.put("isError", isError);
 		
 		JSONArray inames = new JSONArray();
 		inames.addAll(implementsInterfaces);

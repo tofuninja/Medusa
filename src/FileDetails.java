@@ -19,20 +19,42 @@ public class FileDetails {
         // creates an input stream for the file to be parsed
         FileInputStream in = new FileInputStream(file);
 
-        CompilationUnit cu;
+        CompilationUnit cu = null;
         try {
             // parse the file
             cu = JavaParser.parse(in);
-        } 
+        }
+        catch(Exception e)
+        {
+        	ArrayList<JavaClass> arr = new ArrayList<JavaClass>();
+        	JavaClass jc = new JavaClass();
+        	jc.className = "File Error:" + file;
+        	jc.referenceNames = new ArrayList<String>();
+        	jc.isError = true;
+        	arr.add(jc);
+        	return arr;
+        	
+        }
         finally 
         {
             in.close();
         }
-
+        
         // visit and print the methods names
 		MethodVisitor mv = new MethodVisitor();
-        mv.visit(cu, null);
-        
+		try
+		{
+			mv.visit(cu, null);
+		}
+		catch(Exception e)
+        {
+        	ArrayList<JavaClass> arr = new ArrayList<JavaClass>();
+        	JavaClass jc = new JavaClass();
+        	jc.className = "File Error:" + file.substring(file.lastIndexOf('/'));
+        	jc.referenceNames = new ArrayList<String>();
+        	arr.add(jc);
+        	return arr;
+        }
         return mv.classes;
     }
 
