@@ -151,6 +151,7 @@ class nodeType
 {
 	public String text;
 	public String type;
+	public JavaClass c = null;
 	public nodeType(String txt,String typ) 
 	{
 		text = txt;

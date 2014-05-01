@@ -1,12 +1,18 @@
 import java.awt.*;
 
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -22,9 +28,9 @@ public class Pan extends JPanel
 	public static Font font2 = new Font("Courier New", Font.PLAIN, 12);
 	
 	private boolean isFullPan = true;
-	private float zoomx = -300f;
-	private float zoomy = -300f;
-	private float zoom = 1.0f;
+	public float zoomx = -300f;
+	public float zoomy = -300f;
+	public float zoom = 1.0f;
 	private Graphics g;
 	public Diagram diag;
 	
@@ -51,7 +57,11 @@ public class Pan extends JPanel
 		addMouseMotionListener(mouse);
 		addMouseWheelListener(mouse);
 		
-		if(isFullPan) this.setDropTarget(new dragCatcher(this));
+		if(isFullPan) 
+		{
+			this.setDropTarget(new dragCatcher(this));
+			this.addMouseListener(new panRightClick(this));
+		}
 		
 		mouse.wheel = -20;
 		zoom = (float)Math.pow(1.05f, mouse.wheel);
@@ -545,3 +555,66 @@ class PointD
 		y = Y;
 	}
 }
+
+
+
+class panRightClick extends MouseAdapter 
+{
+	private Pan p;
+	
+	public panRightClick(Pan pan)
+	{
+		p = pan;
+	}
+	
+    public void mousePressed(MouseEvent e){
+        if (e.isPopupTrigger())
+            doPop(e);
+    }
+
+    public void mouseReleased(MouseEvent e){
+        if (e.isPopupTrigger())
+            doPop(e);
+    }
+
+    private void doPop(MouseEvent e)
+    {
+    	
+    	if(p.diag == null) return;
+    	if(p.diag.JavaBlocks.size() == 0) return;
+    	
+    	double x = e.getX();
+    	double y = e.getY();
+    	
+    	double rx = p.zoomx + x/p.zoom;
+		double ry = p.zoomy + y/p.zoom;
+		
+		DiagramBlock clickBlock = null;
+		
+		for(DiagramBlock b: p.diag.JavaBlocks)
+		{
+			if(rx > b.block.x && ry > b.block.y && rx < b.block.x + b.block.width && ry < b.block.y + b.block.height)
+				clickBlock = b;
+		}
+		
+		final DiagramBlock db = clickBlock;
+		if(clickBlock != null)
+		{
+			JPopupMenu pop = new JPopupMenu();
+			JMenuItem delete = new JMenuItem("Delete Node");
+			delete.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) 
+				{
+					p.diag.deleteClass(db.Class);
+				}
+			});
+			pop.add(delete);
+			pop.show(e.getComponent(), e.getX(), e.getY());
+		}
+    }
+}
+
+
+

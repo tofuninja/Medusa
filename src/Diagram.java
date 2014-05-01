@@ -32,6 +32,7 @@ class Diagram
 	
 	public void addJSON(JSONObject j)
 	{
+		stopPhys();
 		JSONArray arr = (JSONArray)j.get("blocks");
 		
 		ArrayList<DiagramBlock> newBlocks = new ArrayList<DiagramBlock>();
@@ -87,7 +88,6 @@ class Diagram
 	
 	public void addFiles(List<String> files, int x, int y)
 	{
-		
 		ArrayList<JavaClass> class_list = new ArrayList<JavaClass>();
 
 		for (int i = 0; i < files.size(); i++) 
@@ -115,6 +115,7 @@ class Diagram
 	
 	public void addJavaClasses(List<JavaClass> class_list, int x, int y)
 	{
+		stopPhys();
 		ArrayList<DiagramBlock> newBlocks = new ArrayList<DiagramBlock>();
 		
 		for(int i = 0; i < class_list.size(); i++ ) 
@@ -167,6 +168,29 @@ class Diagram
 	}
 	
 	
+	public void deleteClass(JavaClass jc)
+	{
+		stopPhys();
+		JavaBlocks.remove(jc.diagBlock);
+		
+		for(DiagramBlock db: JavaBlocks)
+		{
+			ArrayList<javaRef> toRemove = new ArrayList<javaRef>();
+			for(javaRef r: db.Class.referenceClasses)
+			{
+				if(r.end == jc)
+					toRemove.add(r);
+			}
+			db.Class.referenceClasses.removeAll(toRemove);
+			
+		}
+		
+		
+		removeNode(jc);
+		runPhys(100000);
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	public JSONObject toJSON()
 	{
@@ -191,6 +215,27 @@ class Diagram
 	}
 	
 	
+	private void removeNode(JavaClass jc)
+	{
+		if(node == null) return;
+		DefaultTreeModel model = (DefaultTreeModel)node.getModel();
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
+		
+		for(int i = 0; i < root.getChildCount(); i++)
+		{
+			DefaultMutableTreeNode tn = (DefaultMutableTreeNode)root.getChildAt(i);
+			nodeType nt = (nodeType)tn.getUserObject();
+			if(nt.c != null && nt.c == jc)
+			{
+				root.remove(tn);
+				break;
+			}
+		}
+		
+		model.reload();
+	}
+	
+	
 	private void createNodes(ArrayList<DiagramBlock> class_list) 
 	{
 		if(node == null) return;
@@ -200,19 +245,22 @@ class Diagram
 		for (DiagramBlock db: class_list )
 		{
 			JavaClass jc = db.Class;
+			nodeType nt;
 			DefaultMutableTreeNode jClass;
 			if(jc.isInterface)
 			{
-				jClass = new DefaultMutableTreeNode(new nodeType(jc.className, "i"));
+				nt = new nodeType(jc.className, "i");
 			}
 			else if(jc.isAbstract)
 			{
-				jClass = new DefaultMutableTreeNode(new nodeType(jc.className, "a"));
+				nt = new nodeType(jc.className, "a");
 			}
 			else
 			{
-				jClass = new DefaultMutableTreeNode(new nodeType(jc.className, "c"));
+				nt = new nodeType(jc.className, "c");
 			}
+			nt.c = jc;
+			jClass = new DefaultMutableTreeNode(nt);
 			root.add(jClass);
 			
 			
@@ -252,21 +300,27 @@ class Diagram
 	private void runPhys(int time)
 	{
 		
+		stopPhys();
+			
+		phys = new physThread();
+		phys.runTime = time;
+		phys.start();
+	}
+	
+	private void stopPhys()
+	{
 		if(phys != null && phys.isAlive())
 		{
 			phys.shouldRun = false;
 			try {
 				phys.join();
 				phys.runTime = 0;
+				phys = null;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-			
-		phys = new physThread();
-		phys.runTime = time;
-		phys.start();
 	}
 	
 	
