@@ -49,11 +49,19 @@ class userClass
 	ArrayList<baseClass> list;
 }
 
-class serverClass
+/**
+*<h3> server </h3>
+* A simple server interface... doesnt really do anything... 
+*/
+interface server
 {
-	ArrayList<userClass> list;
-	network net;
-	html page;
+	void reciveMessage(message m);
+}
+
+
+class message
+{
+
 }
 
 class network

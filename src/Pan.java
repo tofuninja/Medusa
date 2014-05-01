@@ -242,7 +242,7 @@ public class Pan extends JPanel
 		}
 		
 		
-		if(UI.me.dipLegend)
+		if(UI.me.dipLegend && isFullPan)
 		{
 			renderLegend(g);
 		}
