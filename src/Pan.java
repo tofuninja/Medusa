@@ -391,7 +391,7 @@ public class Pan extends JPanel
 		int img_width = maxX - minX + 200;
 		int img_height = maxY - minY + 200;
 		
-	    BufferedImage img = new BufferedImage(img_width,img_height,BufferedImage.TYPE_INT_ARGB);
+	    BufferedImage img = new BufferedImage(img_width,img_height,BufferedImage.TYPE_INT_RGB);
 	    
 		Graphics imgG = img.getGraphics();
 		((Graphics2D) imgG).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

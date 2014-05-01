@@ -359,27 +359,48 @@ public class UI extends JPanel implements ActionListener
 	private  void SaveImage()
 	{
 		tabFrame tb = (tabFrame)tabbedPane.getSelectedComponent();
-		if(tb == null)
+		if(tb == null || tb.pan.diag.JavaBlocks.size() == 0)
 		{
 			infoBox("Nothing to save.","Error");
 			return;
 		}
 		
+		
+		
 		fc = new JFileChooser();
-		fc.setSelectedFile(new File("diagram.png"));
+		fc.setFileFilter(new FileNameExtensionFilter("Image(png, jpg, bmp)", "png", "jpg", "bmp"));
+		fc.setSelectedFile(new File(tb.name+".png"));
 		int returnVal = fc.showSaveDialog(this);
 		
 		if (returnVal == JFileChooser.APPROVE_OPTION) 
 		{
 			File file = fc.getSelectedFile();
-			if(!file.getPath().toLowerCase().endsWith(".png"))
+			String lower = file.getPath().toLowerCase();
+			String format = "";
+			
+			if(lower.endsWith(".png"))
 			{
-			    file = new File(file.getPath() + ".png");
+				format = "png";
 			}
+			else if(lower.endsWith(".jpg"))
+			{
+				format = "jpg";
+			}
+			else if(lower.endsWith(".bmp"))
+			{
+				format = "bmp";
+			}
+			else
+			{
+				format = "png";
+				file = new File(file.getPath() + ".png");
+			}
+			
 			
 			try 
 			{
-				ImageIO.write(tb.pan.renderToImage(), "png",file);
+				ImageIO.write(tb.pan.renderToImage(), format,file);
+				
 			}
 			catch (IOException e) 
 			{
