@@ -501,6 +501,7 @@ class dragCatcher extends DropTarget
 	{
 		dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
 		Transferable t = dtde.getTransferable();
+		System.out.println("drop");
 		
 		if(t.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
 		{
@@ -509,13 +510,16 @@ class dragCatcher extends DropTarget
 	        	@SuppressWarnings("unchecked")
 				java.util.List<File> fileList = (java.util.List<File>)t.getTransferData(DataFlavor.javaFileListFlavor);
 	        	
+	        	ArrayList<String> arr = new ArrayList<String>();
+	        	
 	        	for(File f : fileList)
 	        	{
 	        		UrlResolver resolv = new UrlResolver(f.getAbsolutePath());
-	    			ArrayList<String> arr = resolv.resolve();
-	    			if(arr == null) return;
-	    			currentPan.diag.addFiles(arr, 0, 0);
+	        		ArrayList<String> arr2 = resolv.resolve();
+	    			if(arr2 == null || arr2.size() == 0) continue;
+	    			arr.addAll(arr2);
 	        	}
+	        	currentPan.diag.addFiles(arr, 0, 0);
 			} 
 	        catch (Exception e) 
 	        {

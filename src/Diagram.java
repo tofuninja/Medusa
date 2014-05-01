@@ -89,6 +89,7 @@ class Diagram
 	public void addFiles(List<String> files, int x, int y)
 	{
 		ArrayList<JavaClass> class_list = new ArrayList<JavaClass>();
+		
 
 		for (int i = 0; i < files.size(); i++) 
 		{
@@ -110,6 +111,7 @@ class Diagram
 		
 		
 		addJavaClasses(class_list, x, y);
+		
 	}
 	
 	
